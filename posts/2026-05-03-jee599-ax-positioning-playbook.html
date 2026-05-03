@@ -3,272 +3,312 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>잔디동(jee599) AX 빌더 플레이북 — 자산 분해, 노릴 시장, 쌓을 것 — jee599 reports</title>
+  <title>잔디동(jee599) AX 빌더 플레이북 v2 — GitHub 실측 자산 분석 — jee599 reports</title>
   <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    table { width:100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.93rem; }
+    th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; text-align: left; }
+    th { background: var(--bg); font-weight: 700; }
+    .summary { border-left: 3px solid #222; padding: 0.8rem 1rem; background: #fafafa; margin: 1.2rem 0 1.8rem; }
+    .summary ol { margin: 0.4rem 0 0 1.1rem; padding: 0; }
+    .summary li { margin-bottom: 0.5rem; line-height: 1.55; }
+    .meta-note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin: 0.4rem 0 1.4rem; }
+    .case-box { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.1rem; margin: 1rem 0; }
+    .action-box { border: 2px solid #111; border-radius: 6px; padding: 1rem 1.1rem; margin: 1.4rem 0; background: #fff; }
+    .action-box h3 { margin-top: 0; }
+    .source-box { font-size: 0.86rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem; padding-top: 1rem; }
+    .source-box ol { padding-left: 1.2rem; }
+    .source-box li { margin-bottom: 0.3rem; }
+    code.repo { background: #f3f3f3; padding: 1px 6px; border-radius: 3px; font-size: 0.9em; }
+    .star { color: #b8860b; font-weight: 700; }
+  </style>
 </head>
 <body>
   <p><a href="../index.html">← 보고서 목록</a></p>
-  <h1>잔디동(jee599) AX 빌더 플레이북 — 자산 분해, 노릴 시장, 쌓을 것</h1>
-  <p class="meta">2026-05-03 · 읽기 13분 · personalized strategy, AX positioning, 1인 빌더</p>
+
+  <h1>잔디동(jee599) AX 빌더 플레이북 v2 — GitHub 실측 자산 분석</h1>
+  <p class="meta">2026-05-03 · 읽기 14분 · GitHub jee599 분석, AX 포지셔닝, 1인 OSS 빌더</p>
+  <p class="meta-note">v1은 메모리·로컬 디렉토리 기반 추정이었다. v2는 <a href="https://github.com/jee599">github.com/jee599</a>의 실제 공개 데이터(스타·언어·푸시 시각·description·topics)를 1차 자료로 다시 짠다. 본문 길이 사과 없이 결론부터 간다.</p>
 
   <div class="summary">
     <strong>5줄 요약.</strong>
     <ol>
-      <li>당신만 가진 4축 — 의료(치과) 도메인 자산, AI 콘텐츠 자동화, Claude Code 실전 시스템, 풀스택 1인 운영. 한국에서 이 네 개를 동시에 가진 1인은 사실상 당신 외엔 없다.</li>
-      <li>노릴 시장 1순위는 <strong>치과·의료 AX 컨설팅</strong>. 단가 가장 크고(워크숍 300~500만, 시리즈 2천~5천), 자산이 가장 깊고(dental_data 200+ 디렉토리·dentalad 7종 보고서·5개 스킬 연동), 경쟁이 가장 비어 있다.</li>
-      <li>2순위는 <strong>1인 미디어/마케팅 자동화</strong>(spoonai.me 자체가 라이브 쇼케이스), 3순위는 <strong>Claude Code 실전 강의</strong>(claude-code-book·23개 스킬·workflow orchestrator로 권위 만든 뒤).</li>
-      <li>12주 안에 도달 가능한 마일스톤 — 무료 진단 5건 + 유료 워크숍 1건 + AX & 하이퍼오토메이션 코리아 2026-Fall CFP 채택 + 케이스 스터디 2편 + claude-code-book 50%.</li>
-      <li>가장 위험한 함정은 "강의 권위 만들기 전에 인강 먼저 찍는 것" — 권위는 <strong>발행한 케이스 스터디·연단 발표·실제 클라이언트</strong>가 만든다. 인강은 이 셋이 쌓인 뒤 마지막 단계다.</li>
+      <li>GitHub jee599 데이터 기준 실제 1순위 자산은 <strong>Claude Code 생태계 OSS</strong>다. <a href="https://github.com/jee599/contextzip">contextzip</a> <span class="star">★19</span>, <a href="https://github.com/jee599/agentcrow">agentcrow</a> <span class="star">★3</span>, <a href="https://github.com/jee599/clisync">clisync</a> <span class="star">★4</span> — 외부에서 별을 받은 살아있는 자산. v1이 추정한 spoonai/dental보다 검증 강도가 훨씬 높다.</li>
+      <li>한국에서 Claude Code OSS 빌더가 사실상 없다. 19 stars는 작아 보여도 <strong>외부 검증 시작점</strong>이다. r/ClaudeAI 747k 멤버 풀(<a href="https://gummysearch.com/r/ClaudeAI/">GummySearch</a>) 기준 진입 채널 자체는 크다.</li>
+      <li>동시에 약점이 명확하다 — followers 2명, 48개 repo 중 stars 받은 게 3개, 영문 마케팅 거의 없음, jidong.github.io 2025-03 마지막. 1순위 자산을 가진 사람의 가시성이 0에 가깝다.</li>
+      <li>우선순위 재배치: <strong>1) Claude Code OSS·강의·책 → 2) 의료/치과 AX → 3) 콘텐츠 자동화</strong>. 단가만 보면 의료가 1순위지만, "검증 자산 + 진입 비용" 함수에서는 OSS가 먼저다.</li>
+      <li>이번 주 Day 1: contextzip README 영문 풀버전 + 데모 GIF + Show HN 발사. Show HN 프론트페이지 진입 시 24시간 내 1만~3만 방문(<a href="https://luke.hsiao.dev/blog/2023-hn-traffic/">Hsiao 2023</a>) — followers 2 → +200 가능 구간이다.</li>
     </ol>
   </div>
 
-  <h2>0. 이 메모는 누구에게 쓰는 글인가</h2>
-  <p>당신, 잔디동에게 쓰는 메모다. 첫 보고서는 시장 지형이었다 — 한국이 어떻게 생겼고 누가 어디서 채용·교육·강의를 돌리는지. 이번 메모는 그 지형 위에서 <strong>당신이 가진 자산을 분해해, 어디로 들어가고, 무엇을 쌓을지</strong>만 다룬다. 시장 데이터는 배경으로 짧게만 쓴다. 80%는 행동 지시.</p>
+  <h2>0. v1과 무엇이 달라졌나</h2>
+  <p>v1은 로컬 디렉토리·메모리·skill 목록을 보고 자산을 분류했다. "있다 vs 없다"는 맞았지만 <strong>외부에서 검증된 자산</strong>과 <strong>본인이 보관 중인 자산</strong>을 구분 못 했다. v2는 GitHub API로 본 jee599의 실제 공개 데이터로 다시 짠다. 결론: 의료 자산은 깊지만 모두 비공개·로컬·운영 데이터다. 외부에서 별을 받고 있는 건 Claude Code OSS 3개뿐이다. 시장 진입 순서가 바뀐다.</p>
 
-  <h2>1. 자산 인벤토리 — 당신이 이미 가진 것</h2>
-  <p>아래 표는 메모리·디렉토리·스킬을 횡단해 당신이 실제로 손에 쥔 자산을 4축으로 분류한 것이다. "있음→무엇으로 변환되는가"까지 적었다.</p>
+  <h2>1. GitHub 실측 — 자산 인벤토리</h2>
+  <p>아래는 모두 <a href="https://github.com/jee599?tab=repositories">github.com/jee599?tab=repositories</a> 공개 데이터 기준이다. 추정·예상 없이 stars·언어·마지막 push·description·topics만 옮긴다.</p>
 
+  <h3>1.1 별 받은 OSS — 가장 중요한 검증 자산</h3>
   <table>
     <thead>
-      <tr><th>축</th><th>구체 자산</th><th>상태</th><th>변환 가능 시장</th></tr>
+      <tr><th>Repo</th><th>Stars</th><th>Lang</th><th>Description</th><th>Topics</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>의료(치과) 도메인</strong></td>
-        <td>~/uddental(BUSINESS-OPS, FULL-AD-OPS, onboarding-form), ~/dentalad(ads-research 7종 — Vol.1~5 + Primer + Master), ~/dental_data(parsed_results 6.3MB·search_results 135KB), ~/dental_images, naver-dental-blog 스킬, dental-blog-image-pipeline 스킬, dental-ad-ops 스킬, uddental-site 스킬</td>
-        <td>운영 중 — 치과 광고 5스킬 연동 구조 완성, 1인이 10개 치과 동시 운영 가능 매뉴얼 보유, 의료법 가이드라인·심의 정책 인덱스 보유</td>
-        <td>치과·의료 AX 컨설팅 / 의료광고 사전심의 자동 검수 SaaS / 단일 시술 GEO 부띠끄 / 1인 마케터용 콘텐츠 SaaS</td>
+        <td><a href="https://github.com/jee599/contextzip"><strong>contextzip</strong></a></td>
+        <td><span class="star">★ 19</span></td>
+        <td>Rust</td>
+        <td>"⚡ Cut Claude Code context 60-90%. Live stdout today, session-history compression coming v0.2."</td>
+        <td>ai, claude, cli, context-window, developer-tools, llm, rtk, rust, token-compression</td>
       </tr>
       <tr>
-        <td><strong>AI 콘텐츠 자동화</strong></td>
-        <td>~/spoonai-site(Next.js·Vercel 운영), spoonai-daily-briefing 스킬(매일 08:00 cron), auto-publish 스킬(spoonai+DEV.to+Hashnode 동시), ~/news4ai, ~/blog-factory(naver-queue), ~/dev_blog, ~/hashnode_blog, Resend API 발송 파이프라인, Cowork 3개 스케줄(crawl/publish/email)</td>
-        <td>운영 중 — 구독자 11명(KO 10·EN 1) 운영, 매일 기사 발행, 3플랫폼 동시 발행 가능, 캐싱·이미지 경제학($9.6/월·치과편) 검증</td>
-        <td>1인 미디어/마케팅 자동화 컨설팅 / 자동화 셋업 + 월 운영 리테이너 / 코호트 비즈니스</td>
+        <td><a href="https://github.com/jee599/clisync"><strong>clisync</strong></a></td>
+        <td><span class="star">★ 4</span></td>
+        <td>JavaScript</td>
+        <td>"Sync LLM CLI settings across machines. One command save, one command load."</td>
+        <td>—</td>
       </tr>
       <tr>
-        <td><strong>Claude Code 실전</strong></td>
-        <td>~/.claude/skills 17개+ 스킬(report-builder, github-readme, optimize, ui-ux-pro-max, claude-design-lite 등), workflow orchestrator(plan-orchestrator·code-verifier·codex-cross-verify), ~/.claude/agents 다수, settings.json 훅 시스템, claude-code-book(작성 중 — book1·book2·book3 디렉토리), MCP 서버 연동(Vercel·Codex·Computer-use 등), contextzip 토큰 최적화 적용</td>
-        <td>현역 사용 중 — 매 세션 프로덕션 워크플로우, 책 초고 진행 중, harness-audit 스킬로 자체 점검</td>
-        <td>Claude Code 실전 강의(인강·워크숍·사내 출강) / 출판 / 컨퍼런스 발표 / 개발자 커뮤니티 권위</td>
-      </tr>
-      <tr>
-        <td><strong>풀스택 1인 운영</strong></td>
-        <td>jidonglab.com(자체 사이트), ~/jidonglab-redesign, DEV.to @jee599(블로그), Hashnode(blog), spoonai.me(서비스), GitHub @jee599(reports 등 공개 저장소), 사주 앱·트레이딩 봇·LLMTrio·커피챗 등 사이드 프로덕트 다수</td>
-        <td>가동 중 — 자체 도메인·발행 채널·코드 저장소·서비스 운영 모두 본인 손으로</td>
-        <td>자체 권위 채널 / 영업 funnel / 케이스 스터디 발행 거점 / "직접 만든 사람" 증명</td>
+        <td><a href="https://github.com/jee599/agentcrow"><strong>agentcrow</strong></a></td>
+        <td><span class="star">★ 3</span></td>
+        <td>TypeScript</td>
+        <td>"🐦 The missing piece for Claude Code Agent Teams — auto-decompose prompts and dispatch 144 specialized agents. npx agentcrow init"</td>
+        <td>agent, agent-teams, claude, claude-code, multi-agent, npm, prompt-engineering, subagent, agentcrow</td>
       </tr>
     </tbody>
   </table>
 
-  <p>중요한 건 자산의 양이 아니라 <strong>교집합</strong>이다. 의료 + 자동화 + Claude Code + 풀스택 — 이 네 개가 한 사람 손 안에 동시에 있는 것.</p>
+  <p>3개 모두 명확한 가치 제안이 한 문장에 있다. <code class="repo">contextzip</code>은 "Claude Code 컨텍스트 60-90% 압축"이라는 측정 가능한 효과를 첫 줄에 박았다. 이게 19 stars의 1차 원인이다. 게다가 v0.2 로드맵이 description에 명시 — "살아있는 프로젝트"라는 신호다. <code class="repo">agentcrow</code>는 "144 specialized agents"라는 구체 수치 + <code>npx agentcrow init</code> 즉시 실행 명령이 있다.</p>
 
-  <h2>2. 진짜 차별점 — 시장에 거의 없는 교집합</h2>
-  <p>한국 AX·강의·컨설팅 시장을 사람으로 분해하면 다음 4종이 보인다.</p>
+  <h3>1.2 활성 repo — 최근 push 순</h3>
+  <table>
+    <thead>
+      <tr><th>Repo</th><th>Lang</th><th>마지막 push</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="https://github.com/jee599/reports">reports</a></td><td>HTML</td><td>2026-05-03</td><td>Research reports by jee599 (이 보고서가 들어가는 곳)</td></tr>
+      <tr><td><a href="https://github.com/jee599/dev_blog">dev_blog</a></td><td>Shell</td><td>2026-05-03</td><td>dev blogging</td></tr>
+      <tr><td><a href="https://github.com/jee599/portfolio-site">portfolio-site</a></td><td>Astro</td><td>2026-05-03</td><td>(작업 중)</td></tr>
+      <tr><td><a href="https://github.com/jee599/spoonai-site">spoonai-site</a></td><td>TypeScript</td><td>2026-05-02</td><td>AI 뉴스 발행 플랫폼 프론트</td></tr>
+      <tr><td><a href="https://github.com/jee599/saju">saju</a></td><td>TypeScript</td><td>2026-04-28</td><td>사주 프로젝트</td></tr>
+      <tr><td><a href="https://github.com/jee599/dentalad">dentalad</a></td><td>—</td><td>2026-04-20</td><td>치과 광고 운영</td></tr>
+      <tr><td><a href="https://github.com/jee599/agenthud">agenthud</a></td><td>JavaScript</td><td>2026-04-06</td><td>"Real-time dashboard for monitoring Claude Code agents, subagents, and messages"</td></tr>
+      <tr><td><a href="https://github.com/jee599/claude-code-source-analysis"><strong>claude-code-source-analysis</strong></a></td><td>HTML</td><td>2026-04-05</td><td>"Deep dive into Claude Code CLI source (~80K LOC TypeScript). Architecture, tools"</td></tr>
+      <tr><td><a href="https://github.com/jee599/uddental">uddental</a></td><td>TypeScript</td><td>2026-04-04</td><td>치과 사이트</td></tr>
+      <tr><td><a href="https://github.com/jee599/chromereply">chromereply</a></td><td>TypeScript</td><td>2026-03-29</td><td>"AI-powered comment suggestions for 12+ social platforms. Chrome Extension."</td></tr>
+      <tr><td><a href="https://github.com/jee599/autoviral">autoviral</a></td><td>HTML</td><td>2026-03-24</td><td>"jidonglab SNS automation playbooks — cowork1(publisher), cowork2(engager), cowork3..."</td></tr>
+      <tr><td><a href="https://github.com/jee599/cleantech">cleantech</a></td><td>TypeScript</td><td>2026-03-22</td><td>"Clean Tech Korea - B2B Air Filter Company Website"</td></tr>
+      <tr><td><a href="https://github.com/jee599/ShortsMaker">ShortsMaker</a></td><td>Python</td><td>2026-03-14</td><td>영상 자동 생성</td></tr>
+      <tr><td><a href="https://github.com/jee599/claudebook">claudebook</a></td><td>—</td><td>2026-03-10</td><td>Claude Code 책 (작성 중)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 큐레이션·인프라 시그널</h3>
+  <ul>
+    <li>Fork: <a href="https://github.com/jee599?tab=repositories&type=fork">awesome-claude-code, awesome-claude-code-subagents, awesome-cli-coding-agents, awesome-rust, agency-agents</a> — 큐레이션 권위 채널 시그널.</li>
+    <li><a href="https://github.com/jee599/homebrew-tap">homebrew-tap</a> — tokenzip 배포 인프라.</li>
+    <li>언어 분포: TypeScript 14, HTML 5, C++ 4, Python 4, JavaScript 3, Shell 3, Rust 2, Astro 1, C# 1, Lua 1, Ruby 1.</li>
+  </ul>
+
+  <h3>1.4 사용자 프로필 (실측)</h3>
+  <ul>
+    <li>login: <code>jee599</code>, name: <code>jidonglab</code>, created: 2017-09-05.</li>
+    <li>public_repos: 48 / followers: <strong>2</strong>.</li>
+  </ul>
+
+  <p>48개 repo 중 stars 받은 게 3개. 가시성 지표(followers 2)가 거의 0이다. 자산은 있는데 시장에 안 보이는 상태.</p>
+
+  <h2>2. 진짜 차별점 — 시장 갭 (실측 기반)</h2>
+  <p>한국 AX·강의·OSS 시장을 사람으로 분해하면 다섯 종이 보인다.</p>
 
   <table>
     <thead><tr><th>유형</th><th>가진 것</th><th>못 가진 것</th></tr></thead>
     <tbody>
-      <tr><td>대형 컨설팅펌·교수</td><td>프레임워크·임원 신뢰·연구 권위</td><td>의료법·치과 광고 시장·실제 운영 코드</td></tr>
-      <tr><td>의료인·치과 원장</td><td>의료 도메인·환자 흐름·현장 감각</td><td>코드·자동화·SEO·SaaS 설계</td></tr>
-      <tr><td>일반 개발자</td><td>코드·시스템·자동화</td><td>의료법·광고심의·치과 시장 구조·B2B 의료 영업</td></tr>
-      <tr><td>대형 SI·AX 컨설턴트</td><td>예산·인력·대기업 채널</td><td>속도·단가·1인 운영 사례·indie 감각</td></tr>
+      <tr><td>대형 컨설팅펌·교수</td><td>프레임워크·임원 신뢰</td><td>실행 코드·OSS·인디 감각</td></tr>
+      <tr><td>대형 SI</td><td>예산·인력·대기업 채널</td><td>1인 단가·속도</td></tr>
+      <tr><td>의료인 출신</td><td>의료 도메인</td><td>코드</td></tr>
+      <tr><td>외국 인디 빌더 (Levels·Marc Lou)</td><td>OSS·MRR·영문 팔로워</td><td>한국 의료법·치과 시장·한국어</td></tr>
+      <tr><td><strong>잔디동만</strong></td><td>Claude Code OSS <span class="star">★19</span> + 의료(치과) 풀스택 + Rust·TS·Python 다 짬 + 큐레이션 권위 채널 fork 4종</td><td>외부 마케팅·영문 가시성·팔로워</td></tr>
     </tbody>
   </table>
 
-  <p>당신은 이 네 영역의 <strong>틈새 교집합</strong>에 단독으로 서 있다. 의료법·광고심의 정책 인덱스를 갖고 있으면서(Vol.4·Vol.5), 동시에 Claude Code 23개+ 스킬로 자동화 시스템을 만들었고, 자체 미디어로 매일 콘텐츠를 발행하고 있다. 한국에서 이 네 개를 동시에 가진 1인 빌더는 사실상 없다고 봐도 된다 — 자체 AI 보유 의료 마케팅 회사 6곳(하룹·골드닥터스·덴탈비서·비케이네이션·메디힌트·인크리스)은 팀 단위지 1인 빌더가 아니다.</p>
+  <p>비대칭이 분명하다. 외국 인디 빌더는 한국 의료법을 모르고, 한국 의료인은 코드를 못 짠다. 한국 컨설팅 펌은 OSS를 안 만든다. 잔디동은 이 셋 모두에 발 걸친 1인이다. 19 stars는 작아 보이지만 한국에서 Claude Code OSS로 stars 받은 1인 빌더 자체가 손에 꼽는다. 시장 갭은 자산보다 <strong>"한국에서 그걸 동시에 들고 있는 사람이 거의 없다"</strong>는 사실에 있다.</p>
 
-  <p>이 비대칭이 단가를 만든다. 의료 도메인을 모르는 컨설턴트는 단가 200만원 워크숍이 한계지만, 의료법·광고심의·치과 광고시장 구조까지 다 들고 들어가면 단가 500만원 이상에서 시작할 수 있다. 시장이 좁아 보일 수 있지만 — 한국 치과만 약 1.9만 곳, 그중 마케팅비 월 500만원 이상 쓰는 치과가 적게 잡아 5~10%만 잡아도 1,000~2,000곳이다. 이 시장에 1인 빌더가 거의 없는 게 현재 진짜 사실이다.</p>
+  <h2>3. 노릴 시장 3개 — 우선순위 재배치</h2>
 
-  <h2>3. 노릴 시장 3개 — 우선순위 매겨</h2>
-
-  <h3>시장 A — 치과·의료 AX 컨설팅 (1순위)</h3>
+  <h3>시장 A — Claude Code 생태계 OSS·강의·책 (1순위, 검증 자산)</h3>
   <table>
     <tbody>
-      <tr><th style="width:18%">시장 정의</th><td>치과·중소 병의원의 마케팅·광고·블로그·사이트·환자 응대 자동화를 1인 또는 소수 인력 기준으로 셋업·운영해 주는 컨설팅. 의료법·광고심의 친화 설계가 핵심 차별점.</td></tr>
-      <tr><th>첫 고객 페르소나</th><td>직원 30~50명, 의자 5~12대, 월 마케팅비 500만원 이상, 원장 1~2명·실장 1~2명 구조. 네이버 플레이스·블로그·홈페이지·콜 응대 중 2개 이상에 불만이 있음. 광고대행사 1곳을 6개월 이상 써본 경험 있음.</td></tr>
-      <tr><th>단가 (현재→6개월)</th><td>현재 0원 → 6개월 후: 진단 무료 → 워크숍 1일 300~500만 → 시리즈 컨설팅 3~6개월 2,000~5,000만. 월 운영 리테이너 옵션: 80~150만/월.</td></tr>
-      <tr><th>첫 고객 채널</th><td>(1) uddental·dentalad 자체 사례를 케이스 스터디로 공개 발행 → 자연 유입. (2) 치과 원장 대상 콜드 메일 50통(타깃: 직원 30+, 마케팅비 공개 단서 있는 곳). (3) 메디컬 라운지·치과 원장 카페·치의신보 광고 노출. (4) 치과 광고대행사와 화이트라벨 제휴 1~2곳.</td></tr>
-      <tr><th>즉시 보여줄 자산</th><td>~/dentalad/ads-research 7종 보고서(Vol.1~5+Primer+Master), ~/uddental/BUSINESS-OPS.md, naver-dental-blog 스킬·dental-blog-image-pipeline 스킬·dental-ad-ops 스킬, 의료법 가이드라인 인덱스, AI 브리핑 SEO 전략 노트, 168편 발행 캘린더, 경쟁사 모니터링 시스템.</td></tr>
-      <tr><th>진입 장벽</th><td>의료법·광고심의 학습(이미 끝남), 치과 원장 신뢰 확보(케이스 스터디·실제 가동 사례 1~2곳 필요), 영업 사이클 길다(원장 결재 30~60일).</td></tr>
-      <tr><th>경쟁자</th><td>자체 AI 보유 6곳(하룹·골드닥터스·덴탈비서·비케이네이션·메디힌트·인크리스). 단 모두 팀 단위·SaaS 형. 1인 컨설팅 형은 사실상 없음.</td></tr>
-      <tr><th>첫 90일 행동</th><td>(1) uddental 케이스 스터디 1편 발행. (2) 치과 원장 콜드 메일 템플릿 + 50통. (3) 무료 90분 진단 5건. (4) 유료 워크숍 1건 진행(반액 50% 가능). (5) 의료광고 사전심의 자동 검수 PoC 1개(Vol.5 빈 시장 6개 중 1번).</td></tr>
+      <tr><th>시장 정의</th><td>Claude Code 사용자에게 도구·교육·콘텐츠를 파는 시장. 공급자 측에서 한국 1인 빌더가 거의 없다.</td></tr>
+      <tr><th>첫 고객 페르소나</th><td>1인 SaaS 빌더, AI 도구 회사 PM, 자동화 관심 시니어 개발자. 영문 사용자 80% / 한국 20%.</td></tr>
+      <tr><th>단가 (현실)</th><td>인강 9.9~29.9만원, 라이브 워크숍 30~50만원, 사내 출강 200~300만원, 책 인세, OSS 후속 SaaS MRR $500~5K.</td></tr>
+      <tr><th>단가 (6개월 목표)</th><td>contextzip ★200+ → SaaS 변환 시 MRR $1~3K, 인강 1편 누적 5천만~1억 (패스트캠퍼스 RS 기준 보수치), 책 1권 인세 시작.</td></tr>
+      <tr><th>첫 고객 채널</th><td><a href="https://news.ycombinator.com/show">Show HN</a>, <a href="https://www.reddit.com/r/ClaudeAI/">Reddit r/ClaudeAI (747k)</a>, Twitter/X 인디해커 풀, <a href="https://fastcampus.co.kr/instructor_apply">패스트캠퍼스 강사 등록</a>·<a href="https://www.inflearn.com/">인프런</a>·콜로소 (한국).</td></tr>
+      <tr><th>즉시 보여줄 자산 (실제 URL)</th><td><a href="https://github.com/jee599/contextzip">contextzip</a> ★19, <a href="https://github.com/jee599/agentcrow">agentcrow</a> ★3, <a href="https://github.com/jee599/clisync">clisync</a> ★4, <a href="https://github.com/jee599/claude-code-source-analysis">claude-code-source-analysis</a>, <a href="https://github.com/jee599/agenthud">agenthud</a>, <a href="https://github.com/jee599/claudebook">claudebook</a></td></tr>
+      <tr><th>진입 장벽</th><td>영문 콘텐츠·마케팅이 가장 약함. contextzip v0.2(session-history compression) 출시 일정 미공개.</td></tr>
+      <tr><th>첫 90일 행동</th><td>contextzip 영문 README·Show HN·r/ClaudeAI 발사 / 인강 1편 outline·패스트캠퍼스 제안 / claude-code-book 50% / agentcrow npm 페이지 강화.</td></tr>
     </tbody>
   </table>
 
-  <h3>시장 B — 1인 미디어/마케팅 자동화 (2순위)</h3>
+  <h3>시장 B — 치과·의료 AX 컨설팅 (단가 가장 큼, 자산 풍부)</h3>
   <table>
     <tbody>
-      <tr><th style="width:18%">시장 정의</th><td>콘텐츠·뉴스레터·블로그를 1~3인이 운영하는 미디어·SaaS·코칭 사업자에게 "콘텐츠 자동 수집 → 분석 → 발행 → 메일 발송"을 셋업하고 월 단위로 유지보수해 주는 컨설팅.</td></tr>
-      <tr><th>첫 고객 페르소나</th><td>1~3인 팀, 월 매출 100~1,000만(SaaS 또는 미디어), 뉴스레터 구독자 500~5,000명, 발행 빈도 주 2~5회, 운영자가 콘텐츠 작성에 주 10시간+ 쓰는 사람. "내가 안 만들면 멈춘다"는 위기감.</td></tr>
-      <tr><th>단가 (현재→6개월)</th><td>자동화 셋업 1회 200~400만 + 월 운영 30~80만 리테이너. 6개월 후: 셋업 단가 400~600만, 월 리테이너 평균 50만, 5~7개 라이트 운영.</td></tr>
-      <tr><th>첫 고객 채널</th><td>(1) spoonai.me 자체가 라이브 쇼케이스 — 풋터에 "이 사이트도 동일 시스템으로 운영 중" 명시. (2) LinkedIn 한국어 1인 빌더 다이어리. (3) 인디해커즈 한국 커뮤니티·디스콰이엇·뉴스레터 작가 단톡방. (4) 뉴스레터 운영자 콜드 DM 30건.</td></tr>
-      <tr><th>즉시 보여줄 자산</th><td>spoonai.me 운영 사례(매일 발행·구독자·MRR 추이), auto-publish 스킬(3플랫폼 동시 발행), spoonai-daily-briefing 스킬, Cowork 3개 스케줄, Resend API 개별 발송 노하우, 이미지 경제학 검증($9.6/월·편 단위).</td></tr>
-      <tr><th>진입 장벽</th><td>낮음 — 본인이 이미 만들었고 매일 돌리는 중. 다만 고객 시스템 위에 얹는 작업이라 환경별 디버깅 시간이 단가에 반영돼야 함.</td></tr>
-      <tr><th>경쟁자</th><td>n8n·Make·Zapier 컨설턴트, "AI 자동화 강의" 인플루언서. 단 한국어 + 콘텐츠 미디어 특화 + Resend·플랫폼 개별 발송 노하우까지 동시에 가진 곳은 적음.</td></tr>
-      <tr><th>첫 90일 행동</th><td>(1) spoonai.me 분해 케이스 스터디 1편(가장 시급). (2) 무료 진단 3건(타깃: 뉴스레터 구독자 500+ 운영자). (3) 첫 셋업 1건 200만 진행(케이스 확보). (4) auto-publish 스킬 패키징 — README + 데모 영상.</td></tr>
+      <tr><th>시장 정의</th><td>치과 원장이 마케팅비 월 500만원+ 쓰는 1,000~2,000곳을 대상으로 AX·자동화·의료광고 사전심의 검수까지 일괄 컨설팅.</td></tr>
+      <tr><th>첫 고객 페르소나</th><td>직원 30~50명 치과, 원장 직접 결정권자. 마케팅 대행사 2~3개 굴려본 적 있음.</td></tr>
+      <tr><th>단가 (현실)</th><td>워크숍 300~500만원, 시리즈 컨설팅 2,000~5,000만원 (3~6개월).</td></tr>
+      <tr><th>단가 (6개월 목표)</th><td>케이스 스터디 1건 발행 후 워크숍 단가 500~700만, 시리즈 5,000만+.</td></tr>
+      <tr><th>첫 고객 채널</th><td>치과 원장 커뮤니티, 메디컬 라운지, 직접 콜드 메일, <a href="https://dentalad.or.kr/main/">대한치과의사협회 의료광고심의위원회</a> 정책 변화 모니터링 → 원장 면담 후킹.</td></tr>
+      <tr><th>즉시 보여줄 자산</th><td><a href="https://github.com/jee599/dentalad">dentalad</a>, <a href="https://github.com/jee599/uddental">uddental</a>, ~/.claude/skills/dental-* 5종, 한국 AI 치과 광고 시장 전수조사 7종(Vol.1~5+평이+마스터)</td></tr>
+      <tr><th>진입 장벽</th><td>의료광고 사전심의(이용자 10만+ 플랫폼은 의무 — <a href="https://inblog.ai/ko/blog/medical-ad-review">2026 의료광고 심의 가이드</a>) 숙지, 첫 케이스 스터디 1건이 가장 큰 병목.</td></tr>
+      <tr><th>첫 90일 행동</th><td>dentalad 운영 케이스 스터디 1편(영업 deck 그대로 사용) + 콜드메일 50통 + 무료 진단 3건 + 첫 유료 워크숍 1건.</td></tr>
     </tbody>
   </table>
 
-  <h3>시장 C — Claude Code 실전 강의 (3순위)</h3>
+  <h3>시장 C — 1인 미디어/마케팅 자동화 (코호트 비즈니스 가능)</h3>
   <table>
     <tbody>
-      <tr><th style="width:18%">시장 정의</th><td>개발자·PM·1인 SaaS 빌더 대상 Claude Code·서브에이전트·MCP·스킬 시스템 강의. 인강 + 라이브 워크숍 + 사내 출강 3채널.</td></tr>
-      <tr><th>첫 고객 페르소나</th><td>(인강) 개발자 1~5년차·PM·1인 빌더, 월 강의 예산 5~30만. (워크숍) 사내 디지털팀 5~20명. (사내 출강) 직원 100~500명 IT·SaaS 기업 R&D팀.</td></tr>
-      <tr><th>단가 (현재→6개월)</th><td>인강 9.9~29.9만(러닝커브 짧은 단편), 라이브 워크숍 30~50만/인 또는 그룹 200~400만, 사내 출강 200~300만/회. 6개월 후: 인강 1편 발행 + 라이브 4건 + 사내 2건.</td></tr>
-      <tr><th>첫 고객 채널</th><td>(1) 패스트캠퍼스·인프런·콜로소 — 인강 제안서. (2) AX & 하이퍼오토메이션 코리아 2026-Fall CFP. (3) KOSA AX 공동훈련센터(axedu.kr)·KPC·KMA·에이블런 강사 등록. (4) claude-code-book 출간 후 권위 형성.</td></tr>
-      <tr><th>즉시 보여줄 자산</th><td>~/.claude/skills 17개+, workflow orchestrator(plan-orchestrator·code-verifier·codex-cross-verify), report-builder 스킬(이 보고서 생성 시스템 자체), claude-code-book 진행 중, harness-audit 스킬로 자체 점검 가능, MCP 서버 다수 연동.</td></tr>
-      <tr><th>진입 장벽</th><td>중간 — 권위 자산이 없으면 인강 통과 어려움. 콘퍼런스 발표 1~2회·블로그 케이스 스터디 3편·책 출간 절반 진척 중 하나는 필요.</td></tr>
-      <tr><th>경쟁자</th><td>한국 Claude Code 강사는 매우 적음. 기존 강사 대부분은 LangChain·LlamaIndex 위주. Claude Code 스킬·서브에이전트·MCP에 깊게 들어간 강사는 손에 꼽힘.</td></tr>
-      <tr><th>첫 90일 행동</th><td>(1) report-builder 스킬 분해 글 1편(시장 C용 케이스). (2) AX & 하이퍼오토메이션 코리아 2026-Fall CFP 제출. (3) KOSA·에이블런 강사 등록. (4) 인강 outline 1편(8~10시간 분량).</td></tr>
+      <tr><th>시장 정의</th><td>콘텐츠 1~3인 팀, 월 MRR 100~1000만원 SaaS·미디어를 위한 자동 발행·SNS 자동화 셋업.</td></tr>
+      <tr><th>첫 고객 페르소나</th><td>인디해커즈 한국 멤버, 주말 빌더, 1인 미디어 운영자.</td></tr>
+      <tr><th>단가 (현실)</th><td>셋업 200~400만원 + 월 운영 30~80만원.</td></tr>
+      <tr><th>단가 (6개월 목표)</th><td>코호트 8명 × 50만원 = 400만원/월 정기 매출.</td></tr>
+      <tr><th>첫 고객 채널</th><td>spoonai.me 자체 쇼케이스, LinkedIn, 인디해커즈 한국, Threads.</td></tr>
+      <tr><th>즉시 보여줄 자산</th><td><a href="https://github.com/jee599/spoonai-site">spoonai-site</a>, <a href="https://github.com/jee599/autoviral">autoviral</a>, <a href="https://github.com/jee599/chromereply">chromereply</a>, <a href="https://github.com/jee599/ShortsMaker">ShortsMaker</a>, ~/.claude/skills/auto-publish, spoonai-daily-briefing.</td></tr>
+      <tr><th>진입 장벽</th><td>첫 유료 고객 1건. SaaS 변환 시점 결정.</td></tr>
+      <tr><th>첫 90일 행동</th><td>spoonai.me 분해 케이스 스터디 + 코호트 모집글 + 첫 유료 1건.</td></tr>
     </tbody>
   </table>
 
-  <p><strong>왜 이 순서인가.</strong> A는 단가 가장 크고 자산 가장 많고 경쟁 가장 없다. B는 자산도 깊지만 한국 시장이 아직 작아 단가가 낮다(셋업 단발성). C는 단가는 합리적이지만 권위 자산이 쌓이기 전엔 경쟁이 거칠고 인강 플랫폼 통과가 어렵다. A로 매출·케이스 만들면서 B로 영업 funnel 키우고, C는 권위가 쌓일 때 자동 끌려오는 구조가 합리적이다.</p>
+  <h2>4. 쌓아야 할 것 — 자료·권위·인프라</h2>
 
-  <h2>4. 쌓아야 할 것 — 자료·권위·인프라 3축</h2>
-
-  <h3>4-1. 자료 — 6개월 안에 만들 케이스 스터디 5편</h3>
-  <p>케이스 스터디는 영업 자료다. 추상적 "할 수 있다"가 아니라 "이만큼 만들었다"의 증명물.</p>
+  <h3>4.1 자료 — 6개월 안에 만들 케이스 스터디 5개</h3>
   <ul>
-    <li><strong>Case 1 (시장 B용) — spoonai.me 분해 1편</strong>. Next.js + Vercel + Cowork 3개 스케줄 + Resend 개별 발송 + 이미지 경제학. 구독자 11명에서 시작해 어떻게 운영을 자동화했는지. 비용·시간·실패 노트 포함. 파일: jidonglab.com/case/spoonai-breakdown.</li>
-    <li><strong>Case 2 (시장 A용) — uddental·dentalad 사례 1편</strong>. 치과 광고 5스킬 연동, 1인이 10개 치과 동시 운영 가능 매뉴얼, 의료법·심의 친화 설계, 이미지 25장/편 캐싱 7+18 구조, 월 16편 × $0.60 = ~$9.6/월. 파일: jidonglab.com/case/uddental-ax-pipeline.</li>
-    <li><strong>Case 3 (시장 C용) — report-builder 스킬 분해 1편</strong>. 이 보고서 자체가 어떻게 생성됐는지. plan-orchestrator → Explore → 구현 → code-verifier → codex-cross-verify 6단계 파이프라인을 실제 입력·출력 파일과 함께 공개. 파일: jidonglab.com/case/report-builder-skill.</li>
-    <li><strong>Case 4 (시장 A 확장) — 의료광고 사전심의 자동 검수 PoC 1편</strong>. dentalad ads-research Vol.4 위반 카피 인벤토리를 학습 데이터로 한 분류기 또는 LLM 룰 검증. 한국 빈 시장 6개 중 1번을 직접 만든 형태. 파일: jidonglab.com/case/medad-precheck-poc.</li>
-    <li><strong>Case 5 (시장 B 확장) — auto-publish 스킬 + Hashnode·DEV.to 기록 1편</strong>. 1편의 글을 3플랫폼에 동시 발행할 때의 SEO·후킹·이미지·canonical_url 전략. 실제 트래픽 데이터(구글 search console·DEV.to·Hashnode 분석) 동봉. 파일: jidonglab.com/case/auto-publish-3-platform.</li>
+    <li><strong>Case 1. contextzip 만든 과정 (시장 A)</strong> — Rust로 Claude Code 도구 짠 노하우, ★0→19까지의 마케팅 회고. v0.2 로드맵 공개.</li>
+    <li><strong>Case 2. agentcrow 144 agents 디스패치 시스템 (시장 A)</strong> — 멀티에이전트 아키텍처, npx로 즉시 실행되는 인디 OSS 설계.</li>
+    <li><strong>Case 3. dentalad 치과 광고 운영 사례 (시장 B)</strong> — 의료법 사전심의 준수 + AI 자동화. 영업 deck으로 그대로 쓸 수 있게.</li>
+    <li><strong>Case 4. spoonai.me 1인 미디어 풀스택 (시장 C)</strong> — 수집·분석·생성·발행 자동화 흐름, cron 3개 운영.</li>
+    <li><strong>Case 5. claude-code-source-analysis 80K LOC 분석 (시장 A)</strong> — Claude Code CLI 내부 구조 시리즈 블로그.</li>
   </ul>
 
-  <h3>4-2. 권위 — 발표·등록·출간</h3>
+  <h3>4.2 권위 — 현재 0 → 6개월 후</h3>
   <ul>
-    <li><strong>컨퍼런스 발표 2회</strong> — AX & 하이퍼오토메이션 코리아 2026-Fall CFP 제출 + Claude·Anthropic Developer Day(있다면) 또는 GDG Korea·DevFest 1건. 발표 슬라이드를 jidonglab.com에 공개해 영업 자산화.</li>
-    <li><strong>강사 등록 4곳</strong> — KOSA AX 공동훈련센터(axedu.kr)·KPC·KMA·에이블런(가장 마찰 낮음). 정부 연계 강사 풀에 들어가 있는 것만으로도 사내 출강 인입 채널 확보.</li>
-    <li><strong>인강 1편 런칭</strong> — 패스트캠퍼스 또는 인프런. "Claude Code로 1인 자동화 워크플로우 구축"(8~10시간). 권위 쌓인 뒤 W9~10에 outline 제출. 단, 이건 후순위.</li>
-    <li><strong>claude-code-book 출간</strong> — book1·book2·book3 디렉토리가 이미 있다. 6개월 안에 50% 진척, 1년 안에 출간 또는 무료 온라인 공개. 출간 자체보다 "진행 중·공개 빌딩 로그"가 먼저 권위가 된다(Pieter Levels·Marc Lou 패턴).</li>
+    <li>contextzip <span class="star">★19 → ★200+</span> (Show HN, Product Hunt, X 인디해커 풀). Show HN 프론트페이지 진입 시 24시간 내 1만~3만 방문 + 300+ stars 사례 다수(<a href="https://luke.hsiao.dev/blog/2023-hn-traffic/">Hsiao 2023</a>, <a href="https://www.nebula-graph.io/posts/nebula-graph-being-on-hacker-new-front-page">Nebula Graph 사례</a>).</li>
+    <li>followers 2 → 1,000+ (영문 콘텐츠 + Twitter/X 핀 픽 4개).</li>
+    <li>컨퍼런스 발표 2회 — <a href="https://aiax.etnews.com/">AX & 하이퍼오토메이션 코리아 2026-Fall</a>(2026-Spring은 4월 17일 엘타워 개최, 약 500명 참석 — 이전 가을 기준), PyCon KR 또는 AI Summit.</li>
+    <li>KOSA·KMA·KPC 강사 등록.</li>
+    <li>claudebook 출간 (50% → 100%).</li>
   </ul>
 
-  <h3>4-3. 인프라 — 영업 funnel</h3>
+  <h3>4.3 인프라</h3>
   <ul>
-    <li><strong>jidonglab.com 영업 페이지 강화</strong>. 메인 → 시장별 랜딩 3개(/dental, /media-automation, /claude-code-training). 각 랜딩에 케이스 1~2개 + 가격 + 진단 신청 폼.</li>
-    <li><strong>무료 90분 진단 funnel</strong>. 신청 → 30분 사전 자료 수집(구글폼 7문항) → 90분 진단 콜 → 24시간 내 1페이지 진단서 PDF → 유료 제안서 1종. 첫 5건은 가격 0원, 6건째부터 50만원 유료 진단으로 전환.</li>
-    <li><strong>영업용 deck 1개</strong>. 슬라이드 12장 — 문제 정의(2) + 시장별 사례(3) + 패키지·가격(2) + 본인 자산·이력(3) + 다음 단계(2). 시장별 deck 3종으로 분기.</li>
-    <li><strong>가격표 공개</strong>. 1인 빌더는 가격을 숨기면 안 된다. jidonglab.com/pricing에 워크숍·시리즈·인강·사내 출강 가격을 그대로 게시. 첫 3건은 50% 케이스 확보 가격임을 명시.</li>
+    <li><a href="https://github.com/jee599/portfolio-site">portfolio-site (Astro)</a> 완성 → jidonglab.com 도메인 연결, 시장별 랜딩 3개(A·B·C).</li>
+    <li>영업용 deck 1개 (시장 B용 워크숍 제안서 + 시장 A용 인강 outline).</li>
+    <li>무료 90분 진단 funnel (Calendly + 사전 양식).</li>
+    <li><strong>jee599 GitHub README 풀 영문 + 핀 픽 4개</strong> — contextzip / agentcrow / claude-code-source-analysis / claudebook.</li>
   </ul>
 
-  <h2>5. 12주 로드맵 — Now / Next / Later</h2>
-  <p>주간 단위. 매 주 산출물 1개 이상.</p>
+  <h2>5. 12주 로드맵</h2>
   <table>
-    <thead><tr><th>주차</th><th>작업</th><th>산출물</th></tr></thead>
+    <thead><tr><th>주차</th><th>시장</th><th>작업</th><th>산출물</th></tr></thead>
     <tbody>
-      <tr><td>W1</td><td>jidonglab.com에 "AX 빌더" 메인 페이지 1개 + Case 1 (spoonai.me 분해) 작성. auto-publish 스킬로 spoonai.me·DEV.to·Hashnode 동시 게재.</td><td>랜딩 1개 + 글 1편(3채널 노출)</td></tr>
-      <tr><td>W2</td><td>KOSA AX 공동훈련센터(axedu.kr)·에이블런·KPC 강사 등록 신청. LinkedIn 한국어 프로필 정비 + 첫 포스트.</td><td>등록 신청 3건 완료 + LinkedIn 포스트 1편</td></tr>
-      <tr><td>W3</td><td>LinkedIn "1인 빌더 다이어리" 시리즈 시작(주 3회). Case 2 (uddental·dentalad 사례) 작성 시작.</td><td>LinkedIn 포스트 3편 + Case 2 초고</td></tr>
-      <tr><td>W4</td><td>Case 2 발행 + 치과 원장 콜드 메일 템플릿 작성. 무료 90분 진단 모집글(LinkedIn + spoonai.me 메일링).</td><td>Case 2 발행 + 콜드 메일 50통 발송 + 모집글</td></tr>
-      <tr><td>W5</td><td>무료 진단 5건 진행(시장 A 3건·B 2건). 응답 데이터 분석.</td><td>진단 5건 완료 + 진단 보고서 5종</td></tr>
-      <tr><td>W6</td><td>Case 3 (report-builder 스킬 분해) 발행. 첫 유료 워크숍 제안서 1건(시장 A).</td><td>Case 3 발행 + 제안서 1건</td></tr>
-      <tr><td>W7</td><td>유료 워크숍 1건 진행(시장 A 또는 C, 50% 케이스 확보 가격). AX & 하이퍼오토메이션 코리아 2026-Fall CFP 제출.</td><td>워크숍 1건 + CFP 제출</td></tr>
-      <tr><td>W8</td><td>워크숍 후기·산출물을 Case 4로 발행. claude-code-book 1챕터 작성.</td><td>Case 4 발행 + 책 1챕터</td></tr>
-      <tr><td>W9</td><td>인강 1편 outline(Claude Code 8~10시간) 작성 + 패스트캠퍼스·인프런 제안서.</td><td>인강 outline + 제안서 2곳</td></tr>
-      <tr><td>W10</td><td>의료광고 사전심의 자동 검수 PoC 1개 빌드 시작. Case 5 (auto-publish 3플랫폼) 발행.</td><td>PoC 0.1 + Case 5 발행</td></tr>
-      <tr><td>W11</td><td>두 번째 유료 클라이언트 시도(시장 A 또는 B). claude-code-book 50% 진척.</td><td>유료 2건째 진행 + 책 50%</td></tr>
-      <tr><td>W12</td><td>회고 + 다음 12주 계획. 가격 정상화(첫 3건 케이스 확보 끝나면 정가 시작).</td><td>회고 글 1편 + 가격표 갱신</td></tr>
+      <tr><td>W1</td><td>A</td><td>contextzip README 영문 풀버전 + 데모 GIF + Show HN 발사</td><td>★ 50+ 목표 / Show HN 진입 시 +5K visits</td></tr>
+      <tr><td>W2</td><td>A</td><td>agentcrow README 강화 + npm 페이지 + Reddit r/ClaudeAI 포스트</td><td>★ 20+, npm install 100+/주</td></tr>
+      <tr><td>W3</td><td>A</td><td>claude-code-source-analysis 연재형 영문 블로그 1편 + DEV.to·Hashnode 동시 발행</td><td>영문 블로그 1개 + 트래픽</td></tr>
+      <tr><td>W4</td><td>B</td><td>dentalad 사례 케이스 스터디 1편 + 콜드메일 50통</td><td>글 1편 + 응답 5건</td></tr>
+      <tr><td>W5</td><td>C</td><td>spoonai.me 분해 케이스 스터디 + auto-publish 동시 발행</td><td>글 1편</td></tr>
+      <tr><td>W6</td><td>A</td><td>인강 outline 확정 + 패스트캠퍼스 강사 신청 (영업일 7일 검토 — <a href="https://day1fastcampussupport.zendesk.com/hc/ko/articles/10870840389401">강사 지원 가이드</a>)</td><td>제안서 1건</td></tr>
+      <tr><td>W7</td><td>B</td><td>치과 원장 무료 진단 3건 진행</td><td>첫 유료 전환 시도</td></tr>
+      <tr><td>W8</td><td>A/C</td><td>LinkedIn "1인 OSS 빌더 다이어리" 시작 (주 3회)</td><td>포스트 9개</td></tr>
+      <tr><td>W9</td><td>A</td><td>claudebook 50% 진척</td><td>초고 5장</td></tr>
+      <tr><td>W10</td><td>A</td><td>AX & 하이퍼오토메이션 코리아 2026-Fall CFP 제출</td><td>발표 채택 시도</td></tr>
+      <tr><td>W11</td><td>B</td><td>첫 유료 워크숍 1건 (치과 또는 Claude Code)</td><td>매출</td></tr>
+      <tr><td>W12</td><td>—</td><td>회고 + 12주 데이터 분석 + 다음 분기 OKR</td><td>분기 계획</td></tr>
     </tbody>
   </table>
 
-  <h2>6. 1인 빌더·컨설턴트 실제 사례 — 직접 참고할 수 있는 6명</h2>
+  <h2>6. 약점 보강 — 7일 안에 무조건 할 것</h2>
+  <p>GitHub 실측이 보여준 약점은 다섯 개다. 각각 7일 안에 해결한다.</p>
+  <ol>
+    <li><strong>followers 2 → +20</strong>: Twitter/X 영문 계정 → contextzip·agentcrow 핀 + 인디해커즈 풀 100명 follow back. Marc Lou는 95K 팔로워로 ShipFast $141K MRR을 만든다(<a href="https://newsletter.marclou.com/p/i-made-1-032-000-in-2025">Marc Lou 2025 회고</a>) — 팔로워가 매출의 함수다.</li>
+    <li><strong>profile README 비어있음 → 풀 영문 README + 핀 픽 4개</strong>. 현재 jee599 프로필 페이지에 자기소개·고정 repo 노출 부재.</li>
+    <li><strong>48 repos 중 description 비어있는 게 절반 이상 → 핵심 10개 풀 영문 description + topics 추가</strong>. dentalad·uddental·dev_blog·hashnode_blog·news4ai 등.</li>
+    <li><strong>jidong.github.io 2025-03 마지막 → portfolio-site (Astro) 완성·도메인 연결</strong> (jidonglab.com).</li>
+    <li><strong>contextzip v0.2 (session-history compression) 출시 일정 공개</strong>. README에 명시된 "coming v0.2"가 6개월째 안 나오면 신뢰 깎임.</li>
+  </ol>
+
+  <h2>7. 외국 1인 OSS 빌더 사례 — 잔디동의 좌표 잡기</h2>
 
   <div class="case-box">
-    <strong>Pieter Levels — nomadlist · photoai · remoteok</strong><br>
-    1인 운영 SaaS의 정석. Photo AI는 18개월 만에 $132K MRR(연 환산 $1.6M)을 공개 발표. 핵심 패턴 — "공개 빌딩 로그(BuildInPublic) → 단순한 방향성 → 1주 1제품 → SEO + Twitter 트래픽". 당신은 spoonai.me·jidonglab.com을 같은 방식으로 운영 가능. <a href="https://www.indiehackers.com/post/photo-ai-by-pieter-levels-complete-deep-dive-case-study-0-to-132k-mrr-in-18-months-3a9a2b1579">출처</a>
+    <strong>Pieter Levels</strong> — Nomad List, Photo AI, Remote OK 등 40+ 프로덕트, 솔로. 2025-11 기준 월 $138K, ARR $3M, Photo AI 단독 MRR $132~138K(<a href="https://www.indiehackers.com/post/photo-ai-by-pieter-levels-complete-deep-dive-case-study-0-to-132k-mrr-in-18-months-3a9a2b1579">Indie Hackers 2025</a>, <a href="https://www.fast-saas.com/blog/pieter-levels-success-story/">FastSaaS</a>). 잔디동에게의 함의 — <strong>1인 + 다수 프로덕트 + 각각 작은 MRR 누적</strong> 모델이 가능하다는 외부 증거. 잔디동도 OSS 3개 + 의료 1개 + 자동화 1개 = 5개 프로덕트 누적 모델을 실행 가능.
   </div>
 
   <div class="case-box">
-    <strong>Marc Lou — shipfast · indiepa.ge</strong><br>
-    Next.js 보일러플레이트 ShipFast로 1년 매출 $1,032,000(2025년 공개). 핵심 패턴 — "보일러플레이트 = 영원한 자산" + "Twitter·DEV.to 공개 발행". 당신의 auto-publish 스킬·report-builder 스킬도 같은 방식으로 패키징 가능 — 한국 1인 빌더용 "Claude Code 스킬 보일러플레이트" 형태로.
+    <strong>Marc Lou</strong> — ShipFast $141K MRR, 21개 프로덕트, 95K Twitter 팔로워. 2025년 총 매출 $1,032,000(<a href="https://newsletter.marclou.com/p/i-made-1-032-000-in-2025">"I made $1,032,000 in 2025"</a>, <a href="https://indiepattern.com/stories/marc-lou/">IndiePattern</a>). 핵심: <strong>"단일 breakout 없이 작은 프로덕트 누적"</strong>. 잔디동의 contextzip·agentcrow·clisync 분산 자산이 같은 패턴이다. 다만 Marc은 영문 트위터 마케팅이 매출의 80%다 — 잔디동의 가장 약한 지점.
   </div>
 
   <div class="case-box">
-    <strong>Jason Liu — Indie AI Consulting (Maven 코호트)</strong><br>
-    AI 컨설턴트 입문 코호트. 시간당 $150~$300으로 시작해 워크숍·리테이너로 패키징하는 표준 가격 흐름을 만든 사람. 당신이 시장 C 인강 또는 시장 A 워크숍을 짤 때 가격 구조 그대로 참고 가능. <a href="https://maven.com/indie-consulting/ai-consultant-accelerator">출처</a>
+    <strong>Adam Wathan / DHH</strong> — Tailwind, Rails. 솔로 시작 → OSS → 책·강의로 권위 형성 → 회사 단계. 잔디동의 contextzip·agentcrow·claudebook 경로와 거의 동일하다. 단, 두 사람 모두 <strong>OSS가 일정 규모(1K stars+) 도달한 뒤에 강의·책</strong>으로 갔다. 잔디동의 현재 19 stars는 그 임계 이전. 강의 먼저 찍는 함정 주의.
   </div>
 
   <div class="case-box">
-    <strong>국내 1인 컨설턴트 — 채널톡 AX Consultant 모델</strong><br>
-    채널톡이 신설한 AX Consultant 직무는 "n8n·Dify로 업무 자동화 + 현장 파견으로 AI 도입 드라마 연출". 정확히 1인 컨설턴트가 회사 단위로 들어가는 모델. 당신은 이 직무에 그대로 지원 가능하고, 동시에 그 일을 외부 1인으로도 수주 가능. <a href="https://channel.io/ko/careers/e588e8b8-c1d1-43d7-b8b0-3ae9cb639d74">출처</a>
+    <strong>한국 사례</strong> — 1인 SaaS 매출 공개 사례는 2025년 기준 영문권보다 표본이 적다. <a href="https://jeho.page/essay/2025/08/11/solo-developer.html">K리그 프로그래머 "1인 개발자 전성시대"</a>는 시점이 2022년이라 갱신 데이터로 부족. 잔디동이 2026~2027 한국 1인 빌더 매출 공개 1세대로 들어가면 그 자체가 권위 자산이 된다(LinkedIn 시리즈·뉴스레터 운영).
   </div>
-
-  <div class="case-box">
-    <strong>해외 의료 SaaS 1인 빌더 — Weave · Abridge 카테고리 진입자</strong><br>
-    미국에서 의료 통화 자동 요약 + 차트 매칭 시장은 Weave·Abridge가 카테고리를 만들었지만, 한국에는 덴탈비서 콜비(2026-05 출시)뿐. 당신은 dentalad Vol.5에 정리한 "한국어 AI 콜 응대" 빈 시장에 1인 빌더로 진입 가능하다. PoC 1개 + 치과 1곳 베타 운영부터 시작.
-  </div>
-
-  <div class="case-box">
-    <strong>Substack·뉴스레터 컨설턴트 — Lenny Rachitsky 패턴</strong><br>
-    Lenny는 뉴스레터 1개로 연 매출 수억대를 만들었다. 1인 + 콘텐츠 + 코호트(Lenny's Bootcamp) + 잡 보드. 당신의 spoonai.me + LinkedIn + 코호트(시장 B의 자동화 셋업 4주 코호트) 조합으로 같은 구조 시도 가능.
-  </div>
-
-  <h2>7. 시장 데이터 — 배경(짧게)</h2>
-  <p>전체 시장 지형은 첫 보고서를 참조한다(<a href="2026-05-03-ax-jobs-builder-positioning.html">AX 일자리·강의 시장과 1인 빌더 포지셔닝</a>). 이 메모에서 알아야 할 핵심 수치만 다시 적는다.</p>
-  <ul>
-    <li>한국 직장인 51.8%가 업무에 생성형 AI를 쓰지만 전사 도입은 5%(한국은행 BOK 2025-08).</li>
-    <li>2026년 국내 기업 85%가 생성형 AI 도입 또는 도입 계획(CIO Korea 2026).</li>
-    <li>중소기업 AI 활용률 28.7%→50% 목표·정부 13.5조 투입(2026 정부 발표).</li>
-    <li>해외 워크숍 1일 약 $5,000, 시간당 $150~$500, 6주 프로그램 $20K~$50K(Stack·Maven·Lazzari).</li>
-    <li>2025-06 의료법 시행령 개정 — 일평균 10만+ 매체 사전심의 의무. 2026-01-28 네이버 영수증 리뷰 단속. 2026-03-13 AI 가짜 전문가 광고 금지법 통과(dentalad Vol.1).</li>
-    <li>치과 광고 자체 AI 보유 6곳 — 하룹·골드닥터스·덴탈비서·비케이네이션·메디힌트·인크리스. 모두 팀 단위 SaaS.</li>
-  </ul>
-
-  <p>이 수치들이 의미하는 것은 단순하다 — 시장은 충분히 크고, 정부 예산은 등에 업혀있고, 의료법 변화로 진입 장벽이 코드 가능한 사람에게 유리하게 변했다. 당신이 망설일 이유는 없다.</p>
 
   <div class="action-box">
-    <h3>이번 주 7일 액션 — 월요일~일요일 매일 1개</h3>
+    <h3>이번 주 — 월~일 매일 1개</h3>
     <ul>
-      <li><strong>Day 1 (월)</strong> — jidonglab.com에 "AX 빌더" 메인 페이지 1개 만들어라. 시장별 랜딩 3개(/dental, /media-automation, /claude-code-training)는 stub만 두고, 메인에서 본인 자산 4축을 보여라. 동시에 Case 1 (spoonai.me 분해) 초고 절반 작성하고 auto-publish 스킬로 다음 주 발행 예약.</li>
-      <li><strong>Day 2 (화)</strong> — KOSA AX 공동훈련센터(axedu.kr) 강사 등록 신청 작성·제출. 동시에 에이블런(ablearn.kr/instructor) 이메일 등록.</li>
-      <li><strong>Day 3 (수)</strong> — Case 2 (uddental·dentalad 사례) outline 작성. 5스킬 연동 다이어그램 1장 그려라. 본문은 다음 주.</li>
-      <li><strong>Day 4 (목)</strong> — LinkedIn 한국어 프로필 정비. 헤드라인 "1인 AX 빌더 — 의료·자동화·Claude Code". 첫 포스트 작성·발행.</li>
-      <li><strong>Day 5 (금)</strong> — 무료 90분 AX 진단 모집글 작성. LinkedIn + spoonai.me 메일링 동시 발송. 신청 폼은 구글폼 7문항(회사·규모·예산·현재 도구·문제점 3개·연락처).</li>
-      <li><strong>Day 6 (토)</strong> — 치과 원장 콜드 메일 템플릿 작성. 톤은 "팩트 + 본인 자산 1줄 + 무료 진단 제안" 3단. 50통 리스트는 다음 주 W4에 발송.</li>
-      <li><strong>Day 7 (일)</strong> — 회고 + 다음 주(W2) 계획 1페이지. jidonglab.com에 진척도 적어 둬라(BuildInPublic).</li>
+      <li><strong>Mon</strong> — github.com/jee599 프로필 README 풀 영문 + 핀 픽 4개 (contextzip·agentcrow·clisync·claude-code-source-analysis).</li>
+      <li><strong>Tue</strong> — contextzip README 영문 풀버전 (가치 제안 1줄 → 데모 GIF → 설치 → 사용법 → 로드맵 v0.2).</li>
+      <li><strong>Wed</strong> — Show HN 발사 + r/ClaudeAI 포스트 + Twitter/X 스레드 1개 (contextzip).</li>
+      <li><strong>Thu</strong> — agentcrow README 풀버전 + Twitter/X 스레드 1개 ("144 agents" 시각화).</li>
+      <li><strong>Fri</strong> — KOSA AX 공동훈련센터·에이블런·패스트캠퍼스 강사 등록 신청.</li>
+      <li><strong>Sat</strong> — dentalad 사례 케이스 스터디 작성 시작 (Markdown drafts 5,000자).</li>
+      <li><strong>Sun</strong> — 회고 + 다음 주 계획 + 본 보고서 업데이트.</li>
     </ul>
   </div>
 
-  <h2>8. 위험과 함정</h2>
+  <h2>8. 위험 신호 — 12주 동안 모니터할 것</h2>
   <ul>
-    <li><strong>함정 1 — 권위 만들기 전에 인강부터 찍는 것</strong>. 권위는 케이스·발표·클라이언트가 만든다. 인강은 권위가 쌓인 뒤 가격이 정상화된다. 첫 6주는 발행·발표·진단에 100% 쏟아라.</li>
-    <li><strong>함정 2 — 모든 시장을 동시에 노리는 것</strong>. A·B·C 셋 다 가능해도 첫 12주는 A 60% / B 30% / C 10% 비중. C는 자연 끌려오게 두고 A로 매출·케이스를 만들어라.</li>
-    <li><strong>함정 3 — 공짜 진단을 무한 반복</strong>. 첫 5건만 0원, 6건째부터 50만원 유료 진단으로 전환. 안 그러면 1년 내내 무료 컨설팅만 하다 끝난다.</li>
-    <li><strong>함정 4 — spoonai.me 운영을 영업 자료로 쓰면서 운영 신뢰도를 깎는 것</strong>. 매일 스케줄 빠짐없이 돌아가는 게 1순위. 검증 게이트·신규 기능 추가 시 graceful fallback 유지. spoonai 메모리에 명시된 룰 지켜라.</li>
-    <li><strong>함정 5 — 의료법 위험</strong>. dentalad Vol.4의 의심 도메인(test13321.inblog.io·medioffer.inblog.io) 사례는 반대로 활용해라 — "이런 식으로 자동 발행하면 의료법 적발 패턴" 케이스. 본인은 절대 이 경계를 넘으면 안 된다. 광고심의 친화 설계가 차별점이지 위반 자동화가 아니다.</li>
+    <li><strong>Show HN 진입 실패 시</strong>: Show HN은 2025 들어 2022년 대비 진입 난이도가 올랐다(<a href="https://blog.sturdystatistics.com/posts/show_hn/">State of Show HN 2025</a>). 30분 내 8~10 upvote + 2~3 comment 못 받으면 페이지 1 진입 안 됨. 1차 실패 시 ProductHunt·Reddit r/ClaudeAI 우회.</li>
+    <li><strong>의료광고 사전심의 정책 변경</strong>: 2026년 보건복지부는 이용자 10만+ 플랫폼 사용 시 개별 계정 규모 무관하게 사전심의 의무화 명시(<a href="https://inblog.ai/ko/blog/medical-ad-review">2026 의료광고 심의 가이드</a>). 시장 B 컨설팅 진입 시 자체 검수 자동화 SaaS도 제안 가능.</li>
+    <li><strong>contextzip v0.2 지연</strong>: README "coming v0.2"가 12주 안에 안 나오면 신뢰 깎임. 출시 일정 공개 + 진행도 issue tracker 연결.</li>
+    <li><strong>강의 권위 만들기 전에 인강 먼저 찍는 함정</strong>: Wathan·DHH·Levels 모두 OSS 검증 뒤 강의로 갔다. 잔디동도 ★200 도달 전엔 인강 시작 금지.</li>
   </ul>
 
-  <h2>9. 끝맺음 — 한 문장</h2>
-  <p>당신이 가진 자산을 시장 언어로 번역한 한 문장 — "의료법까지 아는 1인 AX 빌더가 직접 만든 자동화를 그대로 옮겨드립니다." 이 문장이 jidonglab.com 메인 헤드에 박히면 첫 12주가 시작된다.</p>
+  <h2>9. 결론 (요약 재진술)</h2>
+  <p>v1이 추정한 "의료 1순위"는 단가 기준에선 맞지만 <strong>외부 검증 자산 기준</strong>에선 틀렸다. GitHub 실측 데이터는 다른 답을 준다 — Claude Code OSS 3종이 외부에서 별을 받는 살아있는 자산이고, 한국에 같은 위치에 선 1인 빌더가 거의 없다. 19 stars는 작아 보이지만 임계점 시작이고, Show HN·r/ClaudeAI 채널이 살아있다. 의료 시장은 단가가 더 크지만 케이스 스터디 1건이 진입 비용이다. 두 시장을 동시에 돌리되 <strong>이번 주 7일은 시장 A의 가시성 확보</strong>(README·Show HN·핀 픽)에 몰빵한다. 6개월 후 contextzip ★200·followers 1,000·케이스 스터디 5건이 나오면 — 그때 의료 워크숍 단가가 700만, 인강이 패스트캠퍼스에 들어가고, 책이 출간 라인업에 오른다. 순서가 핵심이다.</p>
 
   <div class="source-box">
     <strong>출처</strong>
     <ol>
-      <li><a href="2026-05-03-ax-jobs-builder-positioning.html">AX 일자리·강의 시장과 1인 빌더 포지셔닝(첫 보고서) — jee599 reports</a> — 2026-05-03</li>
-      <li><a href="https://m.go.seoul.co.kr/news/2025/08/18/20250818500163?cp=go">한국 직장인 미국보다 AI 두배 많이 써 — 한국은행 BOK 이슈노트</a> — 2025-08</li>
-      <li><a href="https://www.cio.com/article/4045735/">2026년 국내 기업 85%가 생성형 AI 도입 — CIO Korea</a> — 2026</li>
-      <li><a href="https://www.korcham.net/nCham/Service/Economy/appl/KcciReportDetail.asp?SEQ_NO_C010=20120938915&CHAM_CD=B001">국내 기업 AI 기술 활용 실태 조사 — 대한상의</a> — 2026</li>
-      <li><a href="https://v.daum.net/v/HXuRwrQ9s2">중소기업 AI 활용률 28.7%→50% 13.5조 투입 — 정부 발표</a> — 2026</li>
-      <li><a href="https://channel.io/ko/careers/e588e8b8-c1d1-43d7-b8b0-3ae9cb639d74">채널톡 AX Consultant 채용 — channel.io</a> — 2026</li>
-      <li><a href="https://axedu.kr/ax-center">KOSA AI AX 공동훈련센터 — axedu.kr</a> — 2026</li>
-      <li><a href="https://ablearn.kr/instructor">에이블런 강사 등록</a> — 2026</li>
-      <li><a href="https://aiax.etnews.com/">AX & 하이퍼오토메이션 코리아 2026 — 전자신문</a> — 2026-04</li>
-      <li><a href="https://maven.com/indie-consulting/ai-consultant-accelerator">Indie AI Consulting — Jason Liu / Maven</a> — 2026</li>
-      <li><a href="https://www.indiehackers.com/post/photo-ai-by-pieter-levels-complete-deep-dive-case-study-0-to-132k-mrr-in-18-months-3a9a2b1579">Pieter Levels Photo AI $132K MRR Case — Indie Hackers</a> — 2025-11</li>
-      <li><a href="https://stack.expert/blog/ai-consultant-salary-pricing-guide-for-2025">AI Consultant Salary & Pricing Guide 2026 — Stack</a> — 2026</li>
-      <li><a href="https://nicolalazzari.ai/guides/ai-consultant-pricing-us">AI Consultant Cost US 2025 — Nicola Lazzari</a> — 2025</li>
-      <li><a href="https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&list_no=1480602">보건복지부 의료광고 사전심의 의결 자료(366건) — mohw.go.kr</a> — 2026</li>
-      <li><a href="https://www.dentalad.or.kr/">치과의사협회 의료광고심의 — dentalad.or.kr</a> — 2026</li>
-      <li><a href="https://inblog.ai/ko/blog/medical-ad-review">인블로그 의료광고 가이드 — inblog.ai</a> — 2026</li>
-      <li><a href="https://blog.lead-gen.team/naver-ai-briefing-seo-optimal-strategy">리드젠랩 네이버 AI 브리핑 SEO 최적화 — lead-gen.team</a> — 2026</li>
-      <li><a href="https://blog.onthe.ai/seongmo-dental-geo-success-story">온더AI 성모치과 GEO 케이스 — onthe.ai</a> — 2026</li>
-      <li><a href="https://jidonglab.com">jidonglab.com — 본인 영업·케이스 거점</a></li>
-      <li><a href="https://spoonai.me">spoonai.me — 본인 운영 라이브 쇼케이스</a></li>
-      <li><a href="https://github.com/jee599/reports">github.com/jee599/reports — 본인 리포트 저장소</a></li>
-      <li><a href="https://dev.to/jee599">DEV.to @jee599 — 본인 공개 발행 채널</a></li>
+      <li><a href="https://github.com/jee599">github.com/jee599 (사용자 프로필 — 1차자료)</a></li>
+      <li><a href="https://github.com/jee599/contextzip">github.com/jee599/contextzip ★19</a></li>
+      <li><a href="https://github.com/jee599/agentcrow">github.com/jee599/agentcrow ★3</a></li>
+      <li><a href="https://github.com/jee599/clisync">github.com/jee599/clisync ★4</a></li>
+      <li><a href="https://github.com/jee599/claude-code-source-analysis">github.com/jee599/claude-code-source-analysis</a></li>
+      <li><a href="https://github.com/jee599/agenthud">github.com/jee599/agenthud</a></li>
+      <li><a href="https://github.com/jee599/spoonai-site">github.com/jee599/spoonai-site</a></li>
+      <li><a href="https://github.com/jee599/dentalad">github.com/jee599/dentalad</a></li>
+      <li><a href="https://github.com/jee599/uddental">github.com/jee599/uddental</a></li>
+      <li><a href="https://github.com/jee599/autoviral">github.com/jee599/autoviral</a></li>
+      <li><a href="https://www.indiehackers.com/post/photo-ai-by-pieter-levels-complete-deep-dive-case-study-0-to-132k-mrr-in-18-months-3a9a2b1579">Photo AI by Pieter Levels - $132K MRR — Indie Hackers 2025</a></li>
+      <li><a href="https://www.fast-saas.com/blog/pieter-levels-success-story/">Pieter Levels $3M/Year — FastSaaS Blog</a></li>
+      <li><a href="https://newsletter.marclou.com/p/i-made-1-032-000-in-2025">Marc Lou — "I made $1,032,000 in 2025"</a></li>
+      <li><a href="https://indiepattern.com/stories/marc-lou/">Marc Lou Solo Studio Hit $1M+ — IndiePattern</a></li>
+      <li><a href="https://luke.hsiao.dev/blog/2023-hn-traffic/">Traffic impact of HN front page — Luke Hsiao 2023</a></li>
+      <li><a href="https://www.nebula-graph.io/posts/nebula-graph-being-on-hacker-new-front-page">HN Front Page → 300+ stars in 24h — Nebula Graph</a></li>
+      <li><a href="https://blog.sturdystatistics.com/posts/show_hn/">State of Show HN 2025 — Sturdy Statistics</a></li>
+      <li><a href="https://www.flowjam.com/blog/how-to-get-on-the-front-page-of-hacker-news-in-2025-the-complete-up-to-date-playbook">HN Front Page Playbook 2025 — Flowjam</a></li>
+      <li><a href="https://gummysearch.com/r/ClaudeAI/">r/ClaudeAI 747k 멤버 통계 — GummySearch</a></li>
+      <li><a href="https://aiax.etnews.com/">AX & 하이퍼오토메이션 코리아 2026-Spring</a></li>
+      <li><a href="https://www.etnews.com/20260329000082">AX & 하이퍼오토메이션 코리아 2026-Spring 4월 17일 — 전자신문</a></li>
+      <li><a href="https://dentalad.or.kr/main/">대한치과의사협회 의료광고심의위원회</a></li>
+      <li><a href="https://inblog.ai/ko/blog/medical-ad-review">2026년 의료 광고 심의 가이드 — 인블로그</a></li>
+      <li><a href="https://casenote.kr/%EB%B2%95%EB%A0%B9/%EC%9D%98%EB%A3%8C%EB%B2%95/%EC%A0%9C57%EC%A1%B0">의료법 제57조 (의료광고 심의) — CaseNote</a></li>
+      <li><a href="https://fastcampus.co.kr/instructor_apply">패스트캠퍼스 강사 지원</a></li>
+      <li><a href="https://day1fastcampussupport.zendesk.com/hc/ko/articles/10870840389401">패스트캠퍼스 강사 지원 가이드</a></li>
+      <li><a href="https://www.inflearn.com/">인프런 지식공유자</a></li>
+      <li><a href="https://jeho.page/essay/2025/08/11/solo-developer.html">진짜 1인 개발자 전성시대 — K리그 프로그래머</a></li>
     </ol>
   </div>
+
 </body>
 </html>
