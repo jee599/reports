@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports — jee599</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      transform: translateY(-1px);
+      background: var(--bg);
+    }
+    .card-date {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 3rem 0;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reports</h1>
+  <p class="meta">1인 개발자 jee599의 리서치 보고서 아카이브</p>
+  <div class="grid">
+    <!-- REPORT-CARDS-START -->
+    <p class="empty">아직 보고서가 없습니다. 첫 보고서를 만들어보세요.</p>
+    <!-- REPORT-CARDS-END -->
+  </div>
+</body>
+</html>

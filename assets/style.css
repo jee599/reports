@@ -1,0 +1,133 @@
+:root {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --accent: #111;
+  --muted: #666;
+  --border: #e0e0e0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--text);
+  background: var(--bg);
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-top: 3rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 2rem;
+}
+
+p, li { margin: 0.6rem 0; }
+
+a {
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover { background: #ffec99; }
+
+.meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.summary {
+  font-size: 1.05rem;
+  color: #333;
+  border-left: 3px solid #111;
+  padding: 0.6rem 1rem;
+  background: #fafafa;
+  margin: 1.5rem 0 2.5rem;
+}
+
+.case-box {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  background: #fafafa;
+}
+
+.case-box strong {
+  font-size: 1.05rem;
+}
+
+.action-box {
+  background: #111;
+  color: #fff;
+  padding: 1.75rem 1.75rem 1.5rem;
+  border-radius: 8px;
+  margin-top: 3.5rem;
+}
+
+.action-box h3 {
+  color: #fff;
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+.action-box ul { padding-left: 1.2rem; }
+.action-box li { margin: 0.5rem 0; }
+.action-box a { color: #ffec99; }
+
+.source-box {
+  background: #f7f7f7;
+  border-left: 4px solid #111;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+}
+
+.source-box ol { padding-left: 1.4rem; margin: 0; }
+.source-box li { margin: 0.4rem 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+th { background: #fafafa; font-weight: 700; }
+
+code {
+  background: #f3f3f3;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  font-size: 0.92em;
+}
+
+@media (max-width: 600px) {
+  body { font-size: 17px; padding: 2rem 1rem 4rem; }
+  h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.2rem; }
+}
