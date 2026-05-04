@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한국 AX/AI/바이브코딩/LLM 강의 시장 — 1인 빌더 진입 루트 — jee599 reports</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    table { width:100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.93rem; }
+    th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; text-align: left; }
+    th { background: var(--bg); font-weight: 700; }
+    .summary { border-left: 3px solid #222; padding: 0.8rem 1rem; background: #fafafa; margin: 1.2rem 0 1.8rem; }
+    .summary ol { margin: 0.4rem 0 0 1.1rem; padding: 0; }
+    .summary li { margin-bottom: 0.5rem; line-height: 1.55; }
+    .meta-note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin: 0.4rem 0 1.4rem; }
+    .case-box { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.1rem; margin: 1rem 0; }
+    .action-box { border: 2px solid #111; border-radius: 6px; padding: 1rem 1.1rem; margin: 1.4rem 0; background: #fff; }
+    .action-box h3 { margin-top: 0; }
+    .source-box { font-size: 0.86rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem; padding-top: 1rem; }
+    .source-box ol { padding-left: 1.2rem; }
+    .source-box li { margin-bottom: 0.3rem; }
+    code.repo { background: #f3f3f3; padding: 1px 6px; border-radius: 3px; font-size: 0.9em; }
+    .star { color: #b8860b; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <p><a href="../index.html">← 보고서 목록</a></p>
+
+  <h1>한국 AX/AI/바이브코딩/LLM 강의 시장 — 1인 빌더 진입 루트</h1>
+  <p class="meta">2026-05-04 · 읽기 12분 · 한국 강의 플랫폼, 1인 빌더 강사 진입, 4-에이전트 병렬 리서치</p>
+  <p class="meta-note">대상: 1인 AI 프로덕트 빌더 (jidonglab.com 운영 / spoonai.me·LLMTrio·AgentCrow·AgentOchester·ShortsMaker·TokenZip 보유 / 강사 경력 0). 조사 방식: 4개 서브에이전트 병렬 디스패치 — B2C 플랫폼 / B2B·공공 / 부트캠프·커뮤니티 / 트렌드·ROI. 본 회의록 직접 통합. 출처 URL 모두 보존.</p>
+
+  <div class="summary">
+    <strong>핵심 6줄.</strong>
+    <ol>
+      <li><strong>인프런이 한국 바이브코딩·Claude Code 키워드 트래픽을 사실상 독점.</strong> 셀프 업로드 가능, RS 70~90%, 첫 강의까지 7영업일 심사.</li>
+      <li><strong>부트캠프 메인 강사는 7년+ 경력 / 대졸 이상 벽</strong> — 1인 빌더 사실상 불가. (멋사 KDT 명시)</li>
+      <li><strong>사용자에게 가장 빠른 데뷔 = 인프런 멘토링 + 자체 노션 강의 + X·디스콰이엇 모객.</strong> 학위·경력 검증 없이 즉시 시작.</li>
+      <li><strong>패스트캠퍼스 B2B 생성형 AI 강사 양성캠프 = 학력·경력 무관 무료 진입로.</strong> 1인 빌더가 B2B 풀에 끼는 유일한 정공로.</li>
+      <li><strong>B2B 임원 AX 교육이 단가 천장(회당 100만~500만원+).</strong> 단 인프런 데이터 누적 후 진입.</li>
+      <li><strong>사용자 USP = "지금 돌아가는 자체 SaaS 다수".</strong> 짐코딩(개발 워크플로우)·테디노트(엔터프라이즈 RAG)·양파(MS 출신)와 명확히 다름.</li>
+    </ol>
+  </div>
+
+  <h2>1. 공통 결론 (≥2명 동의)</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>결론</th><th>동의 에이전트</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>인프런이 한국 바이브코딩·Claude Code 키워드 트래픽을 사실상 독점.</strong> 셀프 업로드 가능, RS 70~90%, 첫 강의까지 7영업일 심사.</td>
+        <td>A1, A4</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>부트캠프 메인 강사는 7년+ 경력 / 대졸 이상 벽</strong> — 1인 빌더 사실상 불가. (멋사 KDT 명시)</td>
+        <td>A2, A3</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>사용자에게 가장 빠른 데뷔 = 인프런 멘토링 + 자체 노션 강의 + X·디스콰이엇 모객.</strong> 학위·경력 검증 없이 즉시 시작.</td>
+        <td>A1, A3, A4</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>패스트캠퍼스 B2B 생성형 AI 강사 양성캠프 = 학력·경력 무관 무료 진입로.</strong> 1인 빌더가 B2B 풀에 끼는 유일한 정공로.</td>
+        <td>A1, A2, A3</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>B2B 임원 AX 교육이 단가 천장(회당 100만~500만원+).</strong> 단 인프런 데이터 누적 후 진입.</td>
+        <td>A2, A4</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>사용자 USP = "지금 돌아가는 자체 SaaS 다수".</strong> 짐코딩(개발 워크플로우)·테디노트(엔터프라이즈 RAG)·양파(MS 출신)와 명확히 다름.</td>
+        <td>A1, A4</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. 상충 지점</h2>
+  <ul>
+    <li><strong>콜로소 도메인 적합도</strong> — A1: 크리에이티브 중심 → 미스매치. A4: 에이전트 강의 가능성 언급. <strong>A1 신뢰</strong> (직접 fetch 결과 IT/AI 비중 작음 확인).</li>
+    <li><strong>단가 추정치 격차</strong> — A2(공공 5급 10만/시간 ~ B2B 톱티어 100만/시간) vs A4(김석현 누적 3,000시간 출강 케이스). 양쪽 모두 사실 — 등급 차이로 봐야.</li>
+    <li><strong>콜드 컨택 응답률</strong> — A1은 패캠 PD 컨택 경로를 정상 루트로 제시, A4는 "기획서만으론 응답률 5% 미만" 경고. <strong>A4 우선</strong> — 인프런 데이터 먼저 만들고 PD가 끌려오는 패턴이 정석.</li>
+  </ul>
+
+  <h2>3. 미검증 주장 (사용자가 직접 확인 필요)</h2>
+  <ul>
+    <li>패스트캠퍼스·콜로소·러닝스푼즈 정확한 RS 비율 — <strong>모두 비공개</strong>. 강사 컨택 시 협상 항목.</li>
+    <li>클래스101 60% 정산 비율 — 2020·2022 보도 기준, 2026년 구독모델 정산식 변경 가능성.</li>
+    <li>멀티캠퍼스·휴넷 시간당 강사료 30~70만원 — 통설일 뿐 공식 자료 없음.</li>
+    <li>KT AICE 공인강사 단가 — 비공개.</li>
+    <li>SW마에스트로 멘토 보수 — 미공개.</li>
+    <li>코드스테이츠 멘토 페이지(<code>seb.oopy.io/mentoring/apply-mentor</code>) ECONNREFUSED — 운영 중단 가능성.</li>
+    <li>패스트캠퍼스 B2B 생성형 AI 강사 양성캠프 — 다음 사이클 일정 미공개. 알람 등록 필요.</li>
+  </ul>
+
+  <h2>4. 실행 가능 제안 Top 5 (우선순위순)</h2>
+
+  <h3>1순위 — 이번 주: 인프런 트리플 등록</h3>
+  <ul>
+    <li><strong>(a) 인프런 지식공유자 등록</strong> → 강의 #1 "Claude Code로 1주일에 SaaS 1개" 강의 소개 페이지 + 30분 무료 프리뷰 1개</li>
+    <li><strong>(b) 인프런 멘토링 단독 등록</strong> → 강의 없이 1:1만 시작, 100% 정산. 1시간 ₩50,000~₩150,000 책정. <strong>즉시 매출 가능</strong>.</li>
+    <li><strong>(c) jidonglab.com에 "강의 사전알림 신청" CTA 추가</strong> + spoonai.me 구독자 풀에 사전알림 발송.</li>
+    <li>가이드: <a href="https://inflab-1.gitbook.io/inflearn/" target="_blank">https://inflab-1.gitbook.io/inflearn/</a></li>
+    <li>멘토링: <a href="https://mentoring.inflearn.com/" target="_blank">https://mentoring.inflearn.com/</a></li>
+  </ul>
+
+  <h3>2순위 — 이번 주: 비용 0 인재풀 동시 등록</h3>
+  <ul>
+    <li><strong>에이블런 강사 등록</strong> (<a href="https://ablearn.kr/instructor" target="_blank">https://ablearn.kr/instructor</a>) — 7단계 폼, 즉시 등록. 무료 홍보영상 제작.</li>
+    <li><strong>엘리스 교육 파트너</strong> (<a href="https://elice.partners" target="_blank">https://elice.partners</a>) — 합격/불합격 없음, 인재풀 등록만. AI/데이터사이언스 매칭.</li>
+    <li><strong>KAITA 한국AI강사협회</strong> (<a href="https://www.kaita.kr/" target="_blank">https://www.kaita.kr/</a>) — 회원 가입 후 매칭.</li>
+  </ul>
+
+  <h3>3순위 — 이번 주: SNS 콘텐츠 폭격으로 모객 깔때기 만들기</h3>
+  <ul>
+    <li>디스콰이엇·X·스레드에 "spoonai 6개월 운영 후기 + Claude Code 비용 공개" 1편씩.</li>
+    <li>유튜브에 spoonai 또는 LLMTrio "5분 데모 + 아키텍처 1장" 영상 1개. CTA = jidonglab.com.</li>
+    <li>테디노트·모두의AI(Goos Kim)·짐코딩에 콜라보 DM 1통씩 (게스트 무상 라이브 제안 — 영상 권리는 채널 소유).</li>
+  </ul>
+
+  <h3>4순위 — 1개월: 첫 유료 강의 런칭</h3>
+  <ul>
+    <li><strong>인프런 강의 #1 정식 출시</strong> — ₩159,000 (짐코딩 ₩198,000보다 ₩40K 침투가). 사전등록 50명 모객 목표.</li>
+    <li><strong>자체 LMS 미니강의 1개</strong> — spoonai 케이스 스터디만 따로 ₩49,000, 정산 100% (라이브클래스·스티비 멤버십·토스페이먼츠 결제링크 중 택 1).</li>
+    <li><strong>러닝스푼즈 강사 지원</strong> (<a href="https://learningspoons.com/website/contact/tutor/" target="_blank">https://learningspoons.com/website/contact/tutor/</a>) — 강남 라이브 1일 워크숍 기획. PM이 운영 풀패키지 지원.</li>
+  </ul>
+
+  <h3>5순위 — 3개월: B2B 풀 진입</h3>
+  <ul>
+    <li>인프런 누적 데이터(수강생 N명 / 평점 X)를 무기로 패스트캠퍼스 PD 콜드 메일 (b2b@day1company.co.kr).</li>
+    <li><strong>패스트캠퍼스 B2B 생성형 AI 강사 양성캠프</strong> 다음 사이클 지원 (<a href="https://b2b.fastcampus.co.kr/b2b_instructor_applygenai" target="_blank">https://b2b.fastcampus.co.kr/b2b_instructor_applygenai</a>).</li>
+    <li><strong>KMA AI LAB / KPC AI 컨설팅 강사회원 등록</strong> — B2B 임원교육 풀 진입.</li>
+    <li><strong>그로우앤베터</strong> (<a href="https://www.grownbetter.com" target="_blank">https://www.grownbetter.com</a>) — 강사 풀 등록.</li>
+    <li>현실적 목표: 강의 매출 월 300~600만원 (3개월 누적). 짐코딩 수준 월 1천만+은 6~12개월 누적 후.</li>
+  </ul>
+
+  <h2>5. 함정·리스크 (반드시 고려)</h2>
+  <ol>
+    <li><strong>제작 시간 vs SaaS 본업 매출 침식</strong> — 강의 1개 제작 60~120시간. 강의 출시 사이마다 본업 매출 점검 필수.</li>
+    <li><strong>무한 강의 만들기 함정</strong> — 강의는 본업 SaaS의 마케팅 깔때기여야 ROI가 산다. 강의 자체를 본업 삼지 말 것.</li>
+    <li><strong>PD 콜드 컨택은 인프런 데이터 없이 응답률 5% 미만.</strong> 인프런 → 패스트캠퍼스 순서 엄수.</li>
+    <li><strong>무료 미끼는 유튜브 1~2편까지만.</strong> 본 강의는 처음부터 유료. 무료 길게 끌면 유료 전환 안 됨.</li>
+    <li><strong>"바이브코딩 강의" 시장의 사기 광고 오염</strong> — 사용자의 신뢰 자산은 <strong>운영 중인 SaaS 메트릭 + 비용 공개</strong>. 과장 한 줄도 금지.</li>
+    <li><strong>앤트로픽 가격 정책 리스크</strong> — 2026년 4월 Claude Code Pro($20)→Max($100+) 이동. 강의에 비용 시뮬레이션 섹션 필수.</li>
+    <li><strong>공공 외래강사 5급 단가(시간당 10만)에 묶이지 않기</strong> — 시작은 가능하나 그 시장에 오래 머물면 단가 천장이 낮음.</li>
+  </ol>
+
+  <h2>6. 추천 강의 주제 Top 5 (사용자 USP 정합)</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>제목</th><th>타깃</th><th>플랫폼</th><th>예상 단가</th><th>차별화</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Claude Code로 1주일에 SaaS 1개: 7개 프로덕트 운영자의 실전 워크플로우</strong></td>
+        <td>1인 개발자·사이드 빌더</td>
+        <td>인프런</td>
+        <td>₩159,000~₩198,000</td>
+        <td>jidonglab.com 7+ 프로덕트 케이스 분해</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>AI 뉴스 자동발행 SaaS 만들기 (spoonai 케이스)</strong></td>
+        <td>콘텐츠 자동화·뉴스레터 운영자</td>
+        <td>인프런 + 자체 LMS</td>
+        <td>₩99,000~₩149,000</td>
+        <td>spoonai.me 그대로 분해 — 경쟁 0</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>3개 LLM 동시 호출 비교 SaaS: LLMTrio 빌드 + API 비용 통제</strong></td>
+        <td>LLM 앱 개발자</td>
+        <td>인프런·패캠</td>
+        <td>₩129,000~₩249,000</td>
+        <td>멀티 LLM 비교 강의 한국 시장 거의 없음</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>AI 에이전트로 운영하는 콘텐츠 공장 (ShortsMaker·AgentCrow·AgentOchester 통합)</strong></td>
+        <td>1인 미디어·자동화 부업러</td>
+        <td>콜로소·패캠</td>
+        <td>₩200,000+</td>
+        <td>에이전트 다중운영 실전 강의 시장 거의 없음</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>비개발자 임원을 위한 AI 프로덕트 빌더의 사고법</strong></td>
+        <td>대기업·중견 임원</td>
+        <td>KMA·KPC·그로우앤베터·패캠 B2B</td>
+        <td>회당 100만~500만원+</td>
+        <td>"지금 만들고 있는 사람" 포지션</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>7. 플랫폼 빠른 참조</h2>
+
+  <h3>B2C</h3>
+  <ul>
+    <li>인프런: <a href="https://inflab-1.gitbook.io/inflearn/" target="_blank">https://inflab-1.gitbook.io/inflearn/</a> — 셀프, RS 70~90%</li>
+    <li>패스트캠퍼스 B2C: <a href="https://fastcampus.co.kr/instructor_apply" target="_blank">https://fastcampus.co.kr/instructor_apply</a> — PD 컨택</li>
+    <li>패스트캠퍼스 B2B 강사 양성캠프: <a href="https://b2b.fastcampus.co.kr/b2b_instructor_applygenai" target="_blank">https://b2b.fastcampus.co.kr/b2b_instructor_applygenai</a></li>
+    <li>콜로소: <a href="https://coloso.co.kr/event/applycoloso" target="_blank">https://coloso.co.kr/event/applycoloso</a> — IT 비중 작음</li>
+    <li>클래스101: <a href="https://creator.class101.net/center/apply" target="_blank">https://creator.class101.net/center/apply</a> — 7일 수요조사</li>
+    <li>코드잇: <a href="https://careers.codeit.com/instructor" target="_blank">https://careers.codeit.com/instructor</a> — 부트캠프 강사 채용</li>
+    <li>러닝스푼즈: <a href="https://learningspoons.com/website/contact/tutor/" target="_blank">https://learningspoons.com/website/contact/tutor/</a> — 라이브 본진</li>
+  </ul>
+
+  <h3>B2B/공공</h3>
+  <ul>
+    <li>멀티캠퍼스: 1544-9001, 외부강사 풀 비공개 — 추천·RFP</li>
+    <li>휴넷 AI칼리지: <a href="https://hbs.hunet.co.kr/Hybrid/AICollege" target="_blank">https://hbs.hunet.co.kr/Hybrid/AICollege</a> — 콘텐츠 PD 직접 제안</li>
+    <li>KPC: <a href="https://www.kpc.or.kr/PTWSL001_index.do" target="_blank">https://www.kpc.or.kr/PTWSL001_index.do</a></li>
+    <li>KT AICE: <a href="https://aice.study/" target="_blank">https://aice.study/</a> — Associate(국가공인) 따고 공인강사</li>
+    <li>한국AI교육진흥원: <a href="https://ai-campus.kr/" target="_blank">https://ai-campus.kr/</a></li>
+    <li>KMA AI LAB: <a href="https://ai.kma.or.kr/" target="_blank">https://ai.kma.or.kr/</a></li>
+    <li>에이블런: <a href="https://ablearn.kr/instructor" target="_blank">https://ablearn.kr/instructor</a> — <strong>1인 빌더 최우선 추천</strong></li>
+    <li>KAITA: <a href="https://www.kaita.kr/" target="_blank">https://www.kaita.kr/</a></li>
+    <li>KDT 강사: <a href="https://www.work24.go.kr/" target="_blank">https://www.work24.go.kr/</a> "K-DT 교강사 신청"</li>
+    <li>SW마에스트로 멘토 (2026): <a href="https://event.wanted.co.kr/swmaestro17_mentor" target="_blank">https://event.wanted.co.kr/swmaestro17_mentor</a></li>
+    <li>AI디지털배움터(경기·서울·대구 매년 모집)</li>
+  </ul>
+
+  <h3>부트캠프·커뮤니티</h3>
+  <ul>
+    <li>엘리스 교육 파트너: <a href="https://elice.partners" target="_blank">https://elice.partners</a> — 인재풀 상시</li>
+    <li>인프런 멘토링: <a href="https://mentoring.inflearn.com/" target="_blank">https://mentoring.inflearn.com/</a> — 즉시 가능, 100% 정산</li>
+    <li>모두의연구소 직장인 LLM: <a href="https://llm.modulabs.co.kr/" target="_blank">https://llm.modulabs.co.kr/</a></li>
+    <li>그로우앤베터: <a href="https://www.grownbetter.com" target="_blank">https://www.grownbetter.com</a></li>
+    <li>F-Lab: <a href="https://mentor-recruit.f-lab.kr/" target="_blank">https://mentor-recruit.f-lab.kr/</a> — AI 카테고리 미오픈</li>
+    <li>디스콰이엇: 메이커 챌린지 → 라이브 세션 (stevekwon@disquiet.io / han@disquiet.io)</li>
+    <li>VIB Builders: <a href="https://www.vibb.io/" target="_blank">https://www.vibb.io/</a></li>
+    <li>vibecode.kr 커뮤니티</li>
+  </ul>
+
+  <h2>8. 단 1개 추천 (1인 빌더 ROI 최상)</h2>
+  <div class="action-box">
+    <h3>"인프런 강의 1개 + 인프런 멘토링 + 자체 LMS 미니강의" 트리플, 그 중 인프런 강의·멘토링부터.</h3>
+    <p><strong>근거</strong>:</p>
+    <ol>
+      <li>인프런이 Claude Code·바이브코딩 키워드 트래픽 독점 (전용 큐레이션 페이지 존재).</li>
+      <li>신규 강사가 콜드 트래픽 0인 상태로 무료 노출 받는 유일한 채널.</li>
+      <li>단일 강의 6,000명+ 도달 검증 (짐코딩).</li>
+      <li>본업 SaaS와 강의 콘텐츠 완전 일치 — 추가 R&D 0.</li>
+      <li>인프런 데이터가 패캠·러닝스푼즈·B2B 풀 진입 레버리지로 환류.</li>
+    </ol>
+    <p><strong>이번 주 첫 행동 단 3가지</strong>:</p>
+    <ol>
+      <li>인프런 지식공유자 등록 + 강의 #1 소개 페이지 + 30분 프리뷰 1개</li>
+      <li>인프런 멘토링 단독 등록 (즉시 매출)</li>
+      <li>jidonglab.com에 "강의 사전알림" CTA + X·디스콰이엇 빌더글 1편씩 ("spoonai 운영 6개월 후기 + 비용 공개")</li>
+    </ol>
+  </div>
+
+  <h2>9. 확인 필요 항목 체크리스트 (사용자 다음 액션)</h2>
+  <ul>
+    <li>☐ 패스트캠퍼스·콜로소·러닝스푼즈 RS 비율 — 강사 컨택 시 직접 협상</li>
+    <li>☐ 클래스101 2026 구독모델 정산식 — 신청 후 약관 확인</li>
+    <li>☐ 코드스테이츠 멘토 페이지 운영 여부 — <code>seb.oopy.io/mentoring/apply-mentor</code> 재시도</li>
+    <li>☐ 패캠 B2B 생성형 AI 강사 양성캠프 다음 사이클 — 알람 등록</li>
+    <li>☐ KT AICE Associate(국가공인) 시험 일정 + 공인강사 등록 절차</li>
+  </ul>
+
+  <h2>10. 출처 통합 (주요 URL만)</h2>
+  <div class="source-box">
+    <ol class="sources">
+      <li>인프런 가이드: <a href="https://inflab-1.gitbook.io/inflearn/" target="_blank">https://inflab-1.gitbook.io/inflearn/</a></li>
+      <li>인프런 클로드코드 큐레이션 2026: <a href="https://www.inflearn.com/pages/claudecode2026" target="_blank">https://www.inflearn.com/pages/claudecode2026</a></li>
+      <li>인프런 바이브코딩 카테고리: <a href="https://www.inflearn.com/ko/courses?skill=%EB%B0%94%EC%9D%B4%EB%B8%8C%EC%BD%94%EB%94%A9" target="_blank">https://www.inflearn.com/ko/courses?skill=바이브코딩</a></li>
+      <li>패스트캠퍼스 강사: <a href="https://fastcampus.co.kr/instructor_apply" target="_blank">https://fastcampus.co.kr/instructor_apply</a></li>
+      <li>패캠 B2B 강사양성캠프: <a href="https://b2b.fastcampus.co.kr/b2b_instructor_applygenai" target="_blank">https://b2b.fastcampus.co.kr/b2b_instructor_applygenai</a></li>
+      <li>클래스101 신청: <a href="https://creator.class101.net/center/apply" target="_blank">https://creator.class101.net/center/apply</a></li>
+      <li>코드잇 강사: <a href="https://careers.codeit.com/instructor" target="_blank">https://careers.codeit.com/instructor</a></li>
+      <li>러닝스푼즈 강사: <a href="https://learningspoons.com/website/contact/tutor/" target="_blank">https://learningspoons.com/website/contact/tutor/</a></li>
+      <li>에이블런: <a href="https://ablearn.kr/instructor" target="_blank">https://ablearn.kr/instructor</a></li>
+      <li>엘리스 파트너: <a href="https://elice.partners" target="_blank">https://elice.partners</a></li>
+      <li>인프런 멘토링: <a href="https://mentoring.inflearn.com/" target="_blank">https://mentoring.inflearn.com/</a></li>
+      <li>KAITA: <a href="https://www.kaita.kr/" target="_blank">https://www.kaita.kr/</a></li>
+      <li>KMA AI LAB: <a href="https://ai.kma.or.kr/" target="_blank">https://ai.kma.or.kr/</a></li>
+      <li>KT AICE: <a href="https://aice.study/" target="_blank">https://aice.study/</a></li>
+      <li>SW마에스트로 멘토 2026: <a href="https://event.wanted.co.kr/swmaestro17_mentor" target="_blank">https://event.wanted.co.kr/swmaestro17_mentor</a></li>
+      <li>한국AI교육진흥원: <a href="https://ai-campus.kr/" target="_blank">https://ai-campus.kr/</a></li>
+      <li>모두의연구소 LLM 부트캠프: <a href="https://llm.modulabs.co.kr/" target="_blank">https://llm.modulabs.co.kr/</a></li>
+      <li>그로우앤베터: <a href="https://www.grownbetter.com" target="_blank">https://www.grownbetter.com</a></li>
+      <li>짐코딩 자체사이트: <a href="https://www.gymcoding.co/courses/claude-code-master" target="_blank">https://www.gymcoding.co/courses/claude-code-master</a></li>
+      <li>한국 기업교육 강사료 정보(brunch): <a href="https://brunch.co.kr/@choihs0228/247" target="_blank">https://brunch.co.kr/@choihs0228/247</a></li>
+      <li>1인 개발자 인프런 월 400만원 케이스: <a href="https://www.threads.com/@seonghoonlee_/post/DJBHWWFyjiZ/" target="_blank">https://www.threads.com/@seonghoonlee_/post/DJBHWWFyjiZ/</a></li>
+    </ol>
+  </div>
+
+</body>
+</html>
