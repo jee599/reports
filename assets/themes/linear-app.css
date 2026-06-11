@@ -1,0 +1,250 @@
+/* ── jee599 reports — Linear direction (다크 네이티브 + 인디고 바이올렛) ──
+   DNA(OD linear-app/DESIGN.md 실값): bg #08090a(마케팅 블랙),
+   panel #0f1011, surface #191a1b, text #f7f8f8/#d0d6e0/#8a8f98/#62666d,
+   보더 = 반투명 화이트 rgba(255,255,255,.05~.08), 카드 bg rgba(255,255,255,.02~.05),
+   accent #5e6ad2(CTA bg)/#7170ff(인터랙티브)/#828fff(hover) — 유일한 유채색,
+   Inter Variable + "cv01","ss03", 시그니처 웨이트 510(강조)/590(강한 강조)/400(읽기),
+   디스플레이 타이트 네거티브 트래킹, radius 6/8/12, 섀도 대신 휘도 스텝.
+   mono Berkeley Mono→ui-monospace. 한글은 Pretendard 폴백.
+------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  --bg:        #08090a;   /* 마케팅 블랙 */
+  --panel:     #0f1011;   /* 패널 */
+  --surface:   #191a1b;   /* elevated 서피스 */
+  --ink:       #f7f8f8;   /* 제목 — 순백 아님 */
+  --body:      #d0d6e0;   /* 본문 실버그레이 */
+  --muted:     #8a8f98;   /* 3차 텍스트 */
+  --faint:     #62666d;   /* 4차 텍스트 */
+  --line:      rgba(255,255,255,0.08);  /* 표준 보더 */
+  --line-sub:  rgba(255,255,255,0.05);  /* 섬세 보더 */
+  --card:      rgba(255,255,255,0.02);  /* 카드 — 반투명만 */
+  --card-hi:   rgba(255,255,255,0.05);
+  --brand:     #5e6ad2;   /* CTA bg */
+  --accent:    #7170ff;   /* 링크/액티브 */
+  --accent-hd: #828fff;   /* hover */
+
+  --sans: 'Inter', 'Inter Variable', 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: 'Berkeley Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --r:    6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  font-feature-settings: "cv01", "ss03";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--body);
+  background: var(--bg);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+  counter-reset: section;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 목록 복귀 */
+body > p:first-child { margin: 0 0 2.5rem; }
+body > p:first-child a {
+  font-size: 0.78rem;
+  font-weight: 510;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  text-decoration: none;
+}
+body > p:first-child a:hover { color: var(--ink); }
+
+/* ── 타이틀 — 510 웨이트, 어그레시브 네거티브 트래킹 ─────────── */
+h1 {
+  font-size: clamp(2.3rem, 6vw, 3rem);
+  font-weight: 510;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+.meta {
+  font-size: 0.81rem;
+  font-weight: 400;
+  letter-spacing: -0.13px;
+  color: var(--faint);
+  margin: 0 0 2.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--line-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 요약 = 반투명 카드(휘도 스텝) ─────────────────────────── */
+.summary {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 1.6rem 1.8rem;
+  margin: 0 0 3.25rem;
+}
+.summary strong, .summary b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.85rem;
+}
+.summary p  { font-size: 1.06rem; font-weight: 510; color: var(--ink); line-height: 1.55; margin: 0.55rem 0; letter-spacing: -0.165px; }
+.summary ul, .summary ol { margin: 0; padding-left: 1.2rem; }
+.summary li { margin: 0.55rem 0; font-size: 1.02rem; font-weight: 510; color: var(--ink); line-height: 1.55; }
+.summary li::marker { color: var(--accent); }
+
+/* ── 섹션 헤더 — 바이올렛 모노 카운터 + 510 화이트 ──────────── */
+h2 {
+  font-size: 1.55rem;
+  font-weight: 510;
+  letter-spacing: -0.022em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 3.5rem 0 1.1rem;
+}
+h2::before {
+  counter-increment: section;
+  content: counter(section, decimal-leading-zero);
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
+}
+
+h3 {
+  font-size: 1.08rem;
+  font-weight: 590;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  margin: 2rem 0 0.5rem;
+}
+
+p, li { margin: 0.7rem 0; }
+strong, b { font-weight: 590; color: var(--ink); }
+
+/* ── 링크 = 바이올렛 ──────────────────────────────────────── */
+a { color: var(--accent); text-decoration: none; font-weight: 510; }
+a:hover { color: var(--accent-hd); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── 표 — 반투명 보더, 휘도 스텝 헤더 ──────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+thead th {
+  background: var(--card-hi);
+  font-size: 0.7rem;
+  font-weight: 510;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.75rem 0.95rem;
+  border-bottom: 1px solid var(--line);
+}
+tbody td {
+  padding: 0.7rem 0.95rem;
+  border-bottom: 1px solid var(--line-sub);
+  color: var(--body);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+
+/* ── 사례 — 반투명 카드 ───────────────────────────────────── */
+.case-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 1.05rem 1.35rem;
+  margin: 0.9rem 0;
+}
+.case-box strong { color: var(--ink); font-weight: 590; font-size: 1rem; }
+
+/* ── 액션 — surface 스텝 업 + 인디고 라벨 ──────────────────── */
+.action-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  color: var(--body);
+  padding: 1.8rem 1.9rem 1.5rem;
+  margin-top: 3.5rem;
+}
+.action-box::before {
+  content: "ACTION — 1인 개발자";
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.95rem;
+}
+.action-box h3 { color: var(--ink); margin: 0 0 0.85rem; font-size: 1.2rem; font-weight: 590; letter-spacing: -0.015em; }
+.action-box ul { padding-left: 1.15rem; margin: 0; }
+.action-box li { margin: 0.55rem 0; }
+.action-box a { color: var(--accent-hd); }
+.action-box a:hover { color: var(--ink); }
+
+/* ── 출처 — 패널 스텝 다운 ────────────────────────────────── */
+.source-box {
+  background: var(--panel);
+  border: 1px solid var(--line-sub);
+  border-radius: var(--r-md);
+  padding: 1.2rem 1.45rem;
+  margin: 3rem 0 0;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.source-box strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 0.7rem;
+}
+.source-box ol { padding-left: 1.3rem; margin: 0; }
+.source-box li { margin: 0.4rem 0; }
+.source-box a { color: var(--muted); font-weight: 400; }
+.source-box a:hover { color: var(--accent-hd); }
+
+code {
+  font-family: var(--mono);
+  background: var(--card-hi);
+  border: 1px solid var(--line-sub);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--ink);
+}
+
+@media (max-width: 720px) {
+  body { font-size: 15px; padding: 2.5rem 1.25rem 4rem; }
+  h1 { font-size: 1.95rem; }
+}

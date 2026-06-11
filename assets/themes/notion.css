@@ -1,0 +1,239 @@
+/* ── jee599 reports — Notion direction (웜 미니멀, 종이 같은 화이트) ──
+   DNA(OD notion/DESIGN.md 실값): bg #ffffff, 텍스트 rgba(0,0,0,.95)
+   (니어블랙), 웜 그레이 #615d59/#a39e98, 웜 화이트 면 #f6f5f4,
+   보더 1px rgba(0,0,0,.1)(속삭임), accent #0075de(노션 블루) 단일,
+   focus #097fe8, 틴트 블루 면 #f2f9ff, NotionInter→Inter,
+   웨이트 400/500/600/700(디스플레이), 디스플레이 네거티브 트래킹,
+   섀도 누적 불투명도 0.05 이하 멀티 스택, radius 4(버튼)/12(카드)/9999(필).
+   한글은 Pretendard 폴백.
+------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  --bg:      #ffffff;
+  --ink:     rgba(0,0,0,0.95);  /* 니어블랙 — 순흑 아님 */
+  --body:    rgba(0,0,0,0.95);
+  --second:  #615d59;           /* 웜 그레이 보조 */
+  --muted:   #a39e98;           /* 웜 그레이 뮤트 */
+  --line:    rgba(0,0,0,0.1);   /* 속삭임 보더 */
+  --fill:    #f6f5f4;           /* 웜 화이트 면 */
+  --accent:  #0075de;           /* 노션 블루 — 유일한 유채색 */
+  --focus:   #097fe8;
+  --tint:    #f2f9ff;           /* 블루 틴트 면 */
+
+  --sans: 'NotionInter', 'Inter', 'Pretendard', 'Apple SD Gothic Neo', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  --r-sm: 4px;
+  --r:    8px;
+  --r-lg: 12px;
+  --shadow-stack: rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.85px, rgba(0,0,0,0.02) 0px 0.8px 2.93px, rgba(0,0,0,0.01) 0px 0.175px 1.04px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  font-feature-settings: "lnum";
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--body);
+  background: var(--bg);
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+  counter-reset: section;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 목록 복귀 */
+body > p:first-child { margin: 0 0 2.5rem; }
+body > p:first-child a {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--second);
+  text-decoration: none;
+}
+body > p:first-child a:hover { color: var(--ink); background: var(--fill); border-radius: var(--r-sm); }
+
+/* ── 타이틀 — 700, 압축 트래킹 ────────────────────────────── */
+h1 {
+  font-size: clamp(2.3rem, 6vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.033em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+.meta {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 2.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── 요약 = 노션 콜아웃(웜 화이트 면) ──────────────────────── */
+.summary {
+  background: var(--fill);
+  border-radius: var(--r-lg);
+  padding: 1.6rem 1.8rem;
+  margin: 0 0 3.25rem;
+}
+.summary strong, .summary b {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--second);
+  margin-bottom: 0.85rem;
+}
+.summary p  { font-size: 1.08rem; font-weight: 500; color: var(--ink); line-height: 1.55; margin: 0.55rem 0; }
+.summary ul, .summary ol { margin: 0; padding-left: 1.2rem; }
+.summary li { margin: 0.55rem 0; font-size: 1.04rem; font-weight: 500; color: var(--ink); line-height: 1.55; }
+.summary li::marker { color: var(--second); }
+
+/* ── 섹션 헤더 — 600/700, 작은 웜그레이 카운터 ─────────────── */
+h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 3.5rem 0 1.1rem;
+}
+h2::before {
+  counter-increment: section;
+  content: counter(section, decimal-leading-zero);
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+h3 {
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 2rem 0 0.5rem;
+}
+
+p, li { margin: 0.7rem 0; color: var(--ink); }
+p { color: var(--ink); }
+strong, b { font-weight: 600; color: var(--ink); }
+
+/* ── 링크 = 노션 블루 ─────────────────────────────────────── */
+a { color: var(--accent); text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; color: var(--focus); }
+
+/* ── 표 — 속삭임 보더, 웜그레이 헤더 ───────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  font-size: 0.92rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+thead th {
+  background: var(--fill);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--second);
+  text-align: left;
+  padding: 0.75rem 0.95rem;
+  border-bottom: 1px solid var(--line);
+}
+tbody td {
+  padding: 0.7rem 0.95rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+
+/* ── 사례 — 화이트 카드 + 0.05 이하 섀도 스택 ──────────────── */
+.case-box {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-stack);
+  padding: 1.05rem 1.35rem;
+  margin: 0.9rem 0;
+}
+.case-box strong { color: var(--ink); font-weight: 600; font-size: 1.03rem; }
+
+/* ── 액션 — 블루 틴트 콜아웃 ──────────────────────────────── */
+.action-box {
+  background: var(--tint);
+  border-radius: var(--r-lg);
+  padding: 1.8rem 1.9rem 1.5rem;
+  margin-top: 3.5rem;
+}
+.action-box::before {
+  content: "ACTION — 1인 개발자";
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--focus);
+  margin-bottom: 0.95rem;
+}
+.action-box h3 { color: var(--ink); margin: 0 0 0.85rem; font-size: 1.22rem; font-weight: 700; letter-spacing: -0.018em; }
+.action-box ul { padding-left: 1.15rem; margin: 0; }
+.action-box li { margin: 0.55rem 0; color: var(--ink); }
+.action-box a { color: var(--focus); font-weight: 600; }
+
+/* ── 출처 — 웜 화이트 면 ─────────────────────────────────── */
+.source-box {
+  background: var(--fill);
+  border-radius: var(--r-lg);
+  padding: 1.2rem 1.45rem;
+  margin: 3rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--second);
+}
+.source-box strong {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+.source-box ol { padding-left: 1.3rem; margin: 0; }
+.source-box li { margin: 0.4rem 0; color: var(--second); }
+.source-box a { color: var(--second); font-weight: 500; }
+.source-box a:hover { color: var(--accent); }
+
+code {
+  font-family: var(--mono);
+  background: var(--fill);
+  border: 1px solid var(--line);
+  padding: 0.1em 0.4em;
+  border-radius: var(--r-sm);
+  font-size: 0.85em;
+  color: #eb5757;
+}
+
+@media (max-width: 720px) {
+  body { font-size: 16px; padding: 2.5rem 1.25rem 4rem; }
+  h1 { font-size: 2rem; }
+}
