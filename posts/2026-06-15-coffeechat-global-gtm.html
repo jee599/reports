@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>커피챗 글로벌 진출 전략 — 실판매 각오의 실행 보고서 — jee599 reports</title>
+  <link rel="stylesheet" href="../assets/themes/stripe.css">
+</head>
+<body>
+  <p><a href="../index.html">← 보고서 목록</a></p>
+  <h1>커피챗 글로벌 진출 전략 — 실판매 각오의 실행 보고서</h1>
+  <p class="meta">2026-06-15 · 읽기 14분 · 글로벌 GTM, AI 면접, 결제·가격, 마케팅</p>
+
+  <div class="summary">
+    <strong>결론: 갈 수 있다. 단 형태가 정해져 있다.</strong> 커피챗은 이미 영어 i18n·USD·PayPal·크레딧으로 기술적 글로벌 준비가 끝났고, <strong>3인 AI 패널 + 음성 + 포폴/공고 기반 질문</strong>은 경쟁사 어디도 동시에 갖지 못한 실제 white space다. 다만 다섯 가지가 전제다 — ① 포지션을 "정직한 실력 빌드"로 잡아 평판 리스크가 큰 cheat-copilot 시장과 분리, ② 다국어의 진짜 병목은 LLM이 아니라 <strong>STT</strong>이고 현재의 브라우저 Web Speech API는 MVP용 — 프로덕션 다국어는 서버 STT(Whisper/ElevenLabs Scribe)로 올려야 한다, ③ 결제는 한국 판매자라 Stripe 직접이 막혀 있어 <strong>Merchant-of-Record(Paddle)</strong>로 가야 VAT/세금이 풀린다, ④ <strong>US를 수익 비치헤드</strong>로, <strong>인도·동남아를 저CAC 볼륨</strong>으로 이원화, ⑤ 장르는 Finance/IB·컨설팅·PM·세일즈로 확장하되 디자인(포트폴리오 시각 평가)은 음성에 부적합.
+  </div>
+
+  <h2>배경 — 왜 지금인가</h2>
+  <p>AI 채용 시장 자체가 변곡점이다. AI-in-HR 시장 추정은 firm마다 절대 규모가 갈리지만(2023년 $3.25B~2025년 $8.16B로 정의 불일치) <strong>CAGR ~15~25%</strong>라는 방향은 일치한다(<a href="https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-hr-market-report">Grand View</a>, <a href="https://www.precedenceresearch.com/artificial-intelligence-in-hr-market">Precedence</a>). 면접 준비에 특정한 시장은 <strong>$2.5B(2023)→$6.3B(2031), CAGR 11.8%</strong>로 추산되나 <a href="https://www.verifiedmarketresearch.com/product/interview-preparation-tool-market/">단일 출처</a>라 방향값으로만 본다.</p>
+  <p>수요 신호는 더 분명하다. 실제 면접에서 AI를 쓴 부정행위가 <strong>2025년 하반기 15%→35%</strong>로 뛰었다(<a href="https://fabrichq.ai/blogs/state-of-ai-interview-cheating-in-2026-insights-from-19-368-interviews">Fabric, 19,368건 분석</a>). 이건 두 가지를 동시에 말한다 — 면접 준비 수요가 폭발 중이고, 동시에 "면접 중 몰래 도와주는 copilot" 카테고리는 채용사 적발(35% 플래그)과 평판 리스크에 노출됐다. <strong>커피챗이 들어갈 자리는 후자가 아니라 "면접 전에 제대로 연습시키는" 정직한 실력 빌드 쪽이다.</strong></p>
+
+  <h2>시장 &amp; 경쟁 — white space는 어디인가</h2>
+  <p>경쟁사는 두 가격대로 갈린다: <strong>연습·준비 도구는 $8~$40/월</strong>(Yoodli·Huru·Big Interview), <strong>실시간 copilot은 $55~$150/월</strong>(Final Round·LockedIn·Sensei). 무료 티어는 거의 보편적 획득 수단이고, 인간 코칭은 회당 $179~$300(<a href="https://www.lodely.com/blog/interviewing-io-review">interviewing.io</a>)로 10~50배다. 커피챗은 <strong>$8~$40 "실력 빌드" 클러스터</strong>에 들어가야 하고, 평판이 토식한 copilot 클러스터와는 거리를 둬야 한다.</p>
+  <table>
+    <thead><tr><th>도구</th><th>가격</th><th>모델</th><th>강점</th><th>빈틈(커피챗 기회)</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://interviewing.io/">interviewing.io</a></td><td>회당 $179~300+</td><td>양면 마켓+코칭</td><td>실제 FAANG 인간 면접관·익명</td><td>비쌈, <strong>개발자 전용</strong>, 영어, AI 패널 없음</td></tr>
+      <tr><td><a href="https://igotanoffer.com/en/advice/pramp-alternatives">Pramp</a>(Exponent)</td><td>무료 5회/월</td><td>P2P 프리미엄</td><td>무료·실시간 동료 연습</td><td>동료 품질 편차, 기술 편중, 음성·포폴 없음</td></tr>
+      <tr><td><a href="https://autogpt.net/final-round-ai-review-2025-pricing-features-and-more/">Final Round AI</a></td><td>$148/월(Plus)</td><td>구독</td><td>실시간 답변 copilot, 마케팅</td><td><strong>"부정행위" 평판 리스크</strong>, 비쌈, 실력빌드 아님</td></tr>
+      <tr><td><a href="https://blog.google/company-news/outreach-and-initiatives/grow-with-google/interview-warmup/">Google Interview Warmup</a></td><td>무료(~2026.4 종료)</td><td>무료</td><td>음성/텍스트, ML 인사이트</td><td><strong>채점 없음</strong>, 5개 분야, 얕은 피드백</td></tr>
+      <tr><td><a href="https://yoodli.ai/pricing">Yoodli</a></td><td>$8~$20/월</td><td>프리미엄→구독</td><td><strong>음성/스피치 분석</strong>, $300M+ 가치</td><td>면접 특화 아닌 커뮤니케이션 코칭, 패널·포폴 없음</td></tr>
+      <tr><td><a href="https://igotanoffer.com/en/advice/big-interview-alternatives">Big Interview</a></td><td>$39/월·$299 평생</td><td>일회성/단기구독</td><td>1,000+ 문항, <strong>직군 무관</strong></td><td>낡은 UX, 음성 패널 없음, 포폴/공고 기반 아님</td></tr>
+      <tr><td><a href="https://huru.ai/">Huru</a></td><td>$24.99/월</td><td>구독</td><td>무제한 비디오목, 20K 문항, 다국어</td><td>모바일 경량 피드백, 전문 패널 깊이 없음</td></tr>
+    </tbody>
+  </table>
+  <p><strong>경쟁사 전반의 6가지 빈틈</strong>(= 커피챗 차별점): ① <strong>다인 패널 없음</strong> — 전부 단일 면접관/단일 AI. 3인 패널의 교차질문·상이한 페르소나는 커피챗의 가장 분명한 해자. ② 음성은 드물고 얕다(Yoodli만 진지하나 면접 특화 아님). ③ <strong>포폴/공고 기반 질문 없음</strong> — 전부 범용 문제은행, 후보자의 실제 이력서·포폴+공고에 근거한 질문은 아무도 안 함. ④ 개발/기술 편중(비개발 직군이 비어 있음). ⑤ 영어 단일·서구 중심. ⑥ <strong>윤리 포지션 빈틈</strong> — 가장 빠르게 크는 copilot 세그먼트가 적발·유출(Cluely 8.3만명 유출)로 흔들리는 지금, "부정행위가 아닌 정직한 연습"을 선점할 수 있다.</p>
+
+  <h2>외국어 대응 — 진짜 병목은 STT다</h2>
+  <p>음성 파이프라인은 두 단계로 언어에 민감하다: <strong>STT</strong>(후보 말을 정확히 듣는가) + <strong>LLM</strong>(그 언어로 면접·채점을 잘하는가). 결론부터: <strong>LLM은 상위 ~12개 언어에서 영어 대비 94~98%로 거의 병목이 아니고</strong>(<a href="https://platform.claude.com/docs/en/build-with-claude/multilingual-support">Claude 다국어</a>, <a href="https://github.com/openai/simple-evals/blob/main/multilingual_mmlu_benchmark_results.md">OpenAI MMMLU</a>), <strong>병목은 STT다.</strong> 그리고 커피챗의 STT는 브라우저 Web Speech API인데, 이건 ~60초 컷오프·인터넷 필수·<strong>Firefox 미지원·Safari는 다른 백엔드</strong>·독립 벤치 부재(<a href="https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition">MDN</a>, <a href="https://caniuse.com/speech-recognition">caniuse</a>)라 <strong>MVP용</strong>이다. 프로덕션 다국어는 서버 STT(다국어 1위 <a href="https://elevenlabs.io/blog/meet-scribe">ElevenLabs Scribe</a>, 또는 Whisper)로 올려야 한다.</p>
+  <table>
+    <thead><tr><th>티어</th><th>언어</th><th>STT</th><th>판단(음성 모의면접)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tier 1 — 바로 가능</strong></td><td>영어·스페인어·이탈리아어·포르투갈어(BR)·독일어·프랑스어</td><td>WER 3~6%</td><td>자신 있게 출시. 두 단계 다 안정적.</td></tr>
+      <tr><td><strong>Tier 2 — 가능(주의)</strong></td><td>일본어·한국어·중국어·인니어·힌디어·아랍어</td><td>CER/WER 5~18%, 힌디·아랍 편차 큼</td><td>LLM은 OK, <strong>STT가 리스크.</strong> 힌디/아랍은 비-Whisper STT 필요. 언어별 STT 파일럿 후 품질 약속.</td></tr>
+      <tr><td><strong>Tier 3 — 위험</strong></td><td>베트남·태국·터키·러시아·폴란드 + 저자원</td><td>혼재→저조</td><td>저벤치/열화. <strong>mini/Haiku급 모델 금지</strong>(Yoruba 52.7%). 채점 피드백 약속 말 것 — 텍스트 전용으로 graceful degrade.</td></tr>
+    </tbody>
+  </table>
+  <p>출처: <a href="https://arxiv.org/pdf/2507.13264">Voxtral STT 벤치</a>, <a href="https://arxiv.org/abs/2212.04356">Whisper</a>, <a href="https://arxiv.org/html/2503.10497v1">MMLU-ProX</a>. <em>주의: 한·일·중은 CER이라 유럽어 WER과 직접 비교 불가. 커피챗 실제 STT 경로를 Tier-2 언어 실음성으로 테스트한 뒤 품질을 주장할 것(현재 독립 벤치 없음).</em></p>
+
+  <h2>다양한 장르 면접 — 어디까지 되나</h2>
+  <p>핵심 단층선: <strong>대화/구술형</strong>(행동·핏·구술 케이스·롤플레이)은 음성 패널에 맞고, <strong>산출물 기반</strong>(포트폴리오·덱·라이브코딩·차트·화이트보딩)은 시각 신호가 음성 에이전트에 안 잡혀 안 맞는다.</p>
+  <table>
+    <thead><tr><th>직군</th><th>형식</th><th>AI 음성 적합도</th><th>비고(커피챗 기회)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Finance/IB</strong></td><td>기술(DCF/LBO/회계)+행동</td><td><strong>높음</strong></td><td>정답형 기술→루브릭 채점 이상적. <a href="https://www.wallstreetprep.com/">Wall Street Prep</a> 등 전부 정적/인간, <strong>AI 음성 진입자 0 — 최대 white space</strong></td></tr>
+      <tr><td><strong>컨설팅</strong></td><td>케이스(프레임워크)+PEI</td><td><strong>높음</strong>(1주의)</td><td>가장 구조적. 단 차트/암산은 화면공유+계산검증 필요</td></tr>
+      <tr><td><strong>세일즈/CS</strong></td><td>롤플레이·행동</td><td><strong>높음</strong></td><td>AI가 곧 바이어/고객. 음성 최적합, 미개척</td></tr>
+      <tr><td><strong>PM</strong></td><td>제품감각·추정·메트릭</td><td><strong>높음</strong></td><td>거의 전부 구술. <a href="https://www.tryexponent.com/practice/ai-mock-interviews">Exponent</a>가 강하나 음성은 행동+PM만</td></tr>
+      <tr><td><strong>데이터</strong></td><td>SQL/코딩+통계+행동</td><td>중(분리)</td><td>구술 절반(통계·ML개념·행동)만 커버, 코딩은 에디터 필요</td></tr>
+      <tr><td><strong>마케팅</strong></td><td>전략케이스(덱)+행동</td><td>중</td><td>구술 케이스는 OK, 산출 덱은 못 봄</td></tr>
+      <tr><td><strong>디자인</strong></td><td>포폴 워크/화이트보드</td><td><strong>낮음</strong></td><td>신호가 시각/산출물. 음성-우선 부적합 — 후순위</td></tr>
+    </tbody>
+  </table>
+  <p><strong>다직군 AI 음성 모의면접을 제대로 하는 단일 도구가 없다.</strong> Exponent만 다장르 음성이고 그마저 행동+PM 한정. <strong>Finance/IB는 $497~$1,497 정적 상품 + 시간당 $340~400 코칭만 있고 대화형 AI 진입자가 전무 — 가장 고가치·미경쟁 빈틈.</strong> 커피챗의 포폴/공고 기반+패널은 이 구술/구조 직군으로 신뢰감 있게 확장된다.</p>
+
+  <h2>가격 &amp; 결제 — 한국 판매자의 현실</h2>
+  <p><strong>결론: 한국 1인 판매자는 Stripe 직접이 막혀 있다 — Merchant-of-Record(MoR)로 가야 한다.</strong> Stripe는 한국 은행 정산·판매자 등록 미지원이라, 직접 쓰려면 미국 LLC 등 해외 법인이 필요하다. MoR(Paddle·Lemon Squeezy)는 <strong>법적 재판매자</strong>가 되어 EU VAT(첫 유로부터, 면세 한도 없음)·각국 GST·미국 주 판매세를 대신 징수·납부하고 사기·차지백까지 떠안는다. 1인 팀에게 글로벌 판매의 가장 큰 숨은 비용(50+ 관할 세무 등록·신고)을 없애주는 게 이 ~2% 프리미엄의 값어치다.</p>
+  <table>
+    <thead><tr><th>제공자</th><th>수수료</th><th>MoR?</th><th>세금 대행</th><th>한국 판매자</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.paddle.com/pricing">Paddle</a></td><td>5% + $0.50</td><td>✅</td><td>✅ 전세계 등록·신고·납부</td><td>✅ <strong>명시 지원·정산</strong>(권장 1순위)</td></tr>
+      <tr><td><a href="https://docs.lemonsqueezy.com/help/getting-started/fees">Lemon Squeezy</a></td><td>5% + $0.50 (+1.5% 해외카드)</td><td>✅</td><td>✅ VAT·미국세 징수·납부</td><td>△ PayPal 정산 확인, KRW 은행정산 미확인</td></tr>
+      <tr><td><a href="https://stripe.com/global">Stripe(직접)</a></td><td>~2.9% + $0.30</td><td>❌</td><td>△ Stripe Tax는 계산만, 등록·신고는 본인</td><td>❌ <strong>한국 정산 불가</strong></td></tr>
+      <tr><td><a href="https://www.paypal.com/us/brc/article/what-is-a-cross-border-fee">PayPal(직접)</a></td><td>~3.49~4.49% + 고정 +1.5% 국경 +FX</td><td>❌</td><td>❌ <strong>세금 전부 본인 책임</strong></td><td>✅ (지금 쓰는 중)</td></tr>
+    </tbody>
+  </table>
+  <p><strong>커피챗의 업그레이드 경로:</strong> 시스템-오브-레코드를 MoR(Paddle)로 옮기되 PayPal은 MoR 안의 결제수단 하나로 유지. 동시에 MoR이 지역 결제수단(인도 UPI·브라질 Pix·EU iDEAL/SEPA·동남아 GrabPay)을 자동 추가해줘 전환을 살린다 — 이건 가격보다 전환에 더 크게 작용한다.</p>
+  <p><strong>지역·언어별 가격(PPP):</strong> 글로벌 디지털 제품엔 구매력평가(PPP) 가격이 사실상 표준(Slack·Spotify가 함). 권장: <strong>US/EU/선진 APAC은 USD 정가(~$9~$25 상당), 인도·동남아·중남미는 40~70% PPP 할인.</strong> 커피챗의 <strong>크레딧 모델이 여기 딱 맞는다</strong> — 구독 티어를 다시 짤 필요 없이 <strong>크레딧 팩 가격만 지역별로 할인</strong>하면 된다. 리스크는 VPN/IP 위장·차익 재판매 — 청구지+카드 BIN 국가 일치 요구, 최저가 캡(US의 ~20% 미만 금지), VPN 탐지(<a href="https://www.paritydeals.com/blog/why-purchasing-power-parity-pricing-is-a-must-for-digital-products/">ParityDeals</a>)로 막는다.</p>
+
+  <h2>마케팅 &amp; 진출 — 어디로, 어떻게</h2>
+  <p>면접준비 도구는 <strong>콘텐츠+커뮤니티+SEO로 큰다. 유료광고는 가격민감 제품+1인 예산에 안 맞는다</strong>(B2B 검색 CAC ~$802, 2023년 이후 40~60%↑, <a href="https://usermaven.com/blog/average-customer-acquisition-cost">Usermaven</a>).</p>
+  <table>
+    <thead><tr><th>채널</th><th>지역 적합</th><th>1인 부담</th><th>근거</th></tr></thead>
+    <tbody>
+      <tr><td><strong>SEO(롱테일 "X 면접질문")</strong></td><td>전지역(복리)</td><td>시간 中高</td><td>이력서 도구들이 수백만 유저로 큰 모델(Kickresume 2M+·Rezi 4M+). 검색=웹 53%</td></tr>
+      <tr><td><strong>Reddit</strong>(r/cscareerquestions 등)</td><td>US 최강</td><td>$低/시간高</td><td>인디 면접도구가 <a href="https://www.teamblind.com/post/built-an-interview-prep-tool-got-170-users-in-3-weeks-i7q4p60g">3주 170유저·~6% 전환</a>(소표본). 90/10 규칙</td></tr>
+      <tr><td><strong>Product Hunt 런칭</strong></td><td>US/글로벌 개발</td><td>中(8~12주 준비)</td><td>상위 런칭 15~25% 가입전환·일1k업보트. 백링크+스파이크(지속채널 아님)</td></tr>
+      <tr><td><strong>LinkedIn(오가닉)</strong></td><td>EU·인도 최강</td><td>시간 中</td><td>인도 8.7천만(최고속 성장)·주간 구직 6.5천만+. 창업자 콘텐츠가 광고보다 우위</td></tr>
+      <tr><td><strong>YouTube/TikTok 목업</strong></td><td>US·동남아/인도</td><td>시간高</td><td><strong>제품이 곧 콘텐츠</strong>(3인 패널이 답변 압박하는 30초 클립). 결과(취업)=조회 동력</td></tr>
+    </tbody>
+  </table>
+  <p><strong>비치헤드: US로 수익, 인도/동남아로 볼륨.</strong> 가격민감 프리미엄 제품은 (a)싼 퍼널 (b)생존할 만큼의 유료 둘 다 필요하다. 인도/동남아는 가장 싸고 빠르게 크는 퍼널(APAC 17% CAGR)이나 지불의사 낮음. US는 지불의사+최고 레버리지 오가닉(Reddit·PH·SEO)에 영어 콘텐츠가 복리로 쌓인다. <strong>EU는 아웃바운드 금지</strong>(GDPR — B2C 콜드메일 합법근거 없음, <a href="https://growthlist.co/gdpr-cold-email/">GDPR</a>) → 같은 인바운드 콘텐츠로 흡수.</p>
+  <p><strong>타이밍: Q1이 수요 피크.</strong> 연간 채용의 31~35%가 1~3월, 1월 지원이 12월 대비 200~300%(<a href="https://blog.theinterviewguys.com/january-brings-a-300-spike/">The Interview Guys</a>). <strong>Product Hunt 런칭+SEO 푸시를 12월말~1월초</strong>에, 가을(9~10월) 에코. <strong>퍼널은 오픈 프리미엄 말고 "피드백을 게이트하는" 무료체험형</strong>이 이 카테고리에서 훨씬 잘 전환된다(에듀테크 프리미엄 ~2.6% vs 무료체험 ~22~25%, <a href="https://firstpagesage.com/seo-blog/saas-freemium-conversion-rates/">First Page Sage</a>) — 커피챗은 이미 보고서를 무료로 빼서 "패널 피드백"이 게이트된 아하 모먼트가 되게 설계돼 있다.</p>
+
+  <h2>실사례</h2>
+  <div class="case-box">
+    <strong>interviewing.io</strong> — 실제 FAANG 인간 면접관 마켓플레이스, 회당 $179~$300+, "취업 전엔 후불". 보여주는 것: 인간 코칭의 <strong>가격 천장(10~50배)</strong>과 동시에 <strong>개발자 전용·영어·비확장</strong>이라는 빈틈. 커피챗은 1/10 가격으로 패널 경험을 자동화해 그 사이를 친다. <a href="https://www.lodely.com/blog/interviewing-io-review">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>Final Round AI / Cluely</strong> — 실시간 면접 copilot. Cluely는 a16z 시리즈A 포함 $20M+ 조달했으나 <strong>83,000명 사용자 트랜스크립트·스크린샷 유출</strong>. 채용사 적발률 35%. 교훈: copilot 세그먼트는 자금은 몰리나 <strong>평판·법적·데이터 리스크</strong>가 크다 — 커피챗은 "부정행위 아닌 실력 빌드" 고지를 선점하는 게 차별점. <a href="https://interviewsidekick.com/blog/undetectable-ai-tools-for-live-interviews">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>인디 면접도구(익명)</strong> — Reddit 댓글·피드백 루프로 <strong>3주 만에 ~170유저, ~10명 유료 전환(~6%)</strong>. 1인 GTM이 작동한다는 직접 증거(소표본 주의). 핵심: 제품 홍보가 아니라 면접 불안 질문에 먼저 답하는 give-first. <a href="https://www.teamblind.com/post/built-an-interview-prep-tool-got-170-users-in-3-weeks-i7q4p60g">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>Kickresume / Rezi</strong> — 이력서 도구가 프로그래매틱 SEO("{회사} 면접질문" 류 롱테일 양산)로 <strong>각각 2M+·4M+ 유저</strong>로 확장. 커피챗에 가장 레버리지 큰 장기 채널: "{회사}/{직무} 모의면접" 페이지를 자동 생성해 수년간 복리로 쌓기. <a href="https://superframeworks.com/blog/get-first-10-customers">출처</a>
+  </div>
+
+  <div class="action-box">
+    <h3>커피챗 글로벌 실행 액션 — 이번 주 ~ 3개월</h3>
+    <ul>
+      <li><strong>[이번 주] 결제 라이브 + MoR 전환 검토.</strong> 지금 #1 블로커는 PayPal 키 미설정 — 일단 PayPal로 수익 켜고, 병행해 <a href="https://www.paddle.com/pricing">Paddle</a> 가입(한국 판매자 명시 지원). 시스템-오브-레코드를 MoR로 옮기면 EU/글로벌 VAT가 자동 해결된다.</li>
+      <li><strong>[2주] 포지셔닝·랜딩 영어 카피를 "정직한 패널 연습"으로.</strong> "Survive the panel before the panel" / "They read your resume — so this panel did too" — copilot 시장과 명확히 분리. 차별점(3인 패널+음성+포폴기반) 30초 데모 클립 제작.</li>
+      <li><strong>[3~4주] 언어 티어 정직하게 노출.</strong> Tier-1(영·스·이·포·독·프)만 "음성 지원"으로 출시, Tier-2는 텍스트 우선 + 서버 STT(<a href="https://elevenlabs.io/blog/meet-scribe">ElevenLabs Scribe</a>) 파일럿. Web Speech API 의존을 프로덕션 다국어에서 걷어낼 계획.</li>
+      <li><strong>[1~2개월] Finance/IB·컨설팅·세일즈 면접 팩 추가.</strong> 가장 미경쟁·고가치 빈틈. 포폴/공고 기반+패널 강점이 구술/구조 직군으로 신뢰감 있게 확장.</li>
+      <li><strong>[1~2개월] SEO 엔진 가동.</strong> "{company} interview questions / {role} mock interview" 프로그래매틱 페이지 자동 생성 — Kickresume/Rezi 모델. 1인이 굴릴 수 있는 최장기 복리 채널.</li>
+      <li><strong>[Q1 타이밍] Product Hunt 런칭을 12월말~1월초에.</strong> 8~12주 전 대기자 400+ 모으고, Reddit(r/cscareerquestions) give-first 병행. US 수익 비치헤드 + 인도/동남아 무료 볼륨 이원화.</li>
+      <li><strong>[지역가격] 크레딧 팩에 PPP 할인.</strong> US/EU 정가, 인도·동남아 40~70% 할인(팩 가격만). VPN/BIN 일치·최저가 캡으로 어뷰징 방지.</li>
+    </ul>
+  </div>
+
+  <div class="source-box">
+    <strong>출처</strong>
+    <ol>
+      <li><a href="https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-hr-market-report">AI in HR Market</a> — Grand View Research</li>
+      <li><a href="https://www.verifiedmarketresearch.com/product/interview-preparation-tool-market/">Interview Preparation Tool Market</a> — Verified Market Research(단일출처·추정)</li>
+      <li><a href="https://fabrichq.ai/blogs/state-of-ai-interview-cheating-in-2026-insights-from-19-368-interviews">State of AI Interview Cheating 2026</a> — Fabric</li>
+      <li><a href="https://yoodli.ai/pricing">Yoodli</a> · <a href="https://autogpt.net/final-round-ai-review-2025-pricing-features-and-more/">Final Round AI 리뷰</a> · <a href="https://igotanoffer.com/en/advice/big-interview-alternatives">Big Interview</a> · <a href="https://huru.ai/">Huru</a> — 경쟁사 가격</li>
+      <li><a href="https://arxiv.org/pdf/2507.13264">Voxtral STT 벤치</a> · <a href="https://arxiv.org/abs/2212.04356">Whisper</a> — STT 언어별 정확도</li>
+      <li><a href="https://platform.claude.com/docs/en/build-with-claude/multilingual-support">Claude 다국어</a> · <a href="https://arxiv.org/html/2503.10497v1">MMLU-ProX</a> — LLM 다국어 품질</li>
+      <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition">MDN Web Speech API</a> · <a href="https://elevenlabs.io/blog/meet-scribe">ElevenLabs Scribe</a> — STT 인프라</li>
+      <li><a href="https://www.wallstreetprep.com/">Wall Street Prep</a> · <a href="https://www.tryexponent.com/practice/ai-mock-interviews">Exponent</a> · <a href="https://www.rocketblocks.me/consulting.php">RocketBlocks</a> — 비개발 직군 도구</li>
+      <li><a href="https://www.paddle.com/pricing">Paddle</a> · <a href="https://docs.lemonsqueezy.com/help/getting-started/fees">Lemon Squeezy</a> · <a href="https://stripe.com/global">Stripe Global</a> · <a href="https://www.paypal.com/us/brc/article/what-is-a-cross-border-fee">PayPal 국경수수료</a> — 결제</li>
+      <li><a href="https://www.paritydeals.com/blog/why-purchasing-power-parity-pricing-is-a-must-for-digital-products/">PPP 가격</a> · <a href="https://gr4vy.com/posts/payment-methods-by-country-2026-what-dominates-each-market-and-how-to-accept-them/">국가별 결제수단</a></li>
+      <li><a href="https://firstpagesage.com/seo-blog/saas-freemium-conversion-rates/">프리미엄 전환율</a> · <a href="https://usermaven.com/blog/average-customer-acquisition-cost">CAC 벤치마크</a> · <a href="https://blog.theinterviewguys.com/january-brings-a-300-spike/">1월 채용 스파이크</a> · <a href="https://growthlist.co/gdpr-cold-email/">GDPR 콜드메일</a></li>
+      <li><a href="https://www.teamblind.com/post/built-an-interview-prep-tool-got-170-users-in-3-weeks-i7q4p60g">인디 GTM 사례</a> · <a href="https://superframeworks.com/blog/get-first-10-customers">솔로 SaaS 첫 고객</a></li>
+    </ol>
+    <p style="margin-top:1em;font-size:0.9em;"><em>데이터 품질 주의: 면접준비 시장 규모는 단일 출처 추정. AI-HR 절대 규모는 firm별 정의 불일치(CAGR만 신뢰). Web Speech API 독립 STT 벤치 없음 — Tier-2 언어는 실음성 파일럿 필수. 일부 경쟁사 가격·인디 전환율(6%)은 소표본/제3자 추정. Google Interview Warmup 2026.4 종료 추정.</em></p>
+  </div>
+</body>
+</html>
