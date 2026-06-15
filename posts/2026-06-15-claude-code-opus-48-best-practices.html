@@ -84,6 +84,33 @@
 
   <p>주의: Anthropic이 Dynamic Workflows·Agent Teams로 멀티에이전트 오케스트레이션을 제품에 흡수 중이라(동시 16/총 1,000 캡), ruflo(구 claude-flow)·claude-squad 같은 서드파티 의존은 줄어드는 추세다. ★ 수치는 검색 스냅샷 기반이라 ±오차가 있다.</p>
 
+  <h2>심화 — Dynamic Workflows (2026 최대 변화)</h2>
+  <p>Opus 4.8과 함께 온 가장 큰 변화. Claude가 작업을 보고 <strong>JavaScript 오케스트레이션 스크립트를 직접 작성</strong>하면, 별도 백그라운드 런타임이 그 스크립트를 실행해 수십~수백 개 서브에이전트를 띄운다. 핵심 설계는 <em>"중간 결과가 컨텍스트가 아니라 스크립트 변수에 산다"</em> — 그래서 조율 코드(루프·분기·라우팅)는 <strong>모델 토큰 0</strong>이고, leaf <code>agent()</code> 호출만 토큰을 쓴다(<a href="https://code.claude.com/docs/en/workflows">공식 문서</a>, <a href="https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code">Anthropic blog</a>).</p>
+
+  <p><strong>서브에이전트 vs 워크플로우 판단 룰.</strong> 서브에이전트는 "1라운드 병렬 판단"으로 결론이 Claude 컨텍스트로 돌아온다. 워크플로우는 <strong>"N단계 출력이 N+1을 결정"</strong>할 때(route·score·filter·loop·retry·verify) — 계획을 <em>스크립트가</em> 들고 있어 Claude 컨텍스트엔 최종답만 남는다. "5개 파일 병렬 리뷰"는 서브에이전트, "리뷰→각 발견 적대적 검증→통과분만 보고→깨끗할 때까지 루프"는 워크플로우다.</p>
+
+  <p><strong>해결하는 3대 실패(Anthropic 명시):</strong> ① agentic laziness(50개 중 35개만 보고 "done" → 워크플로우는 배열이 빌 때까지 <code>for</code> 루프), ② self-preferential bias(자기 작업 후하게 채점 → 판정자를 별도 컨텍스트·다른 모델로 분리), ③ goal drift(긴 세션에서 목표 흐려짐 → 목표를 모델 기억 밖 스크립트에 고정)(<a href="https://www.productcompass.pm/p/claude-code-dynamic-workflows">productcompass</a>).</p>
+
+  <table>
+    <thead><tr><th>6가지 합성 패턴</th><th>쓸 때</th></tr></thead>
+    <tbody>
+      <tr><td>Classify-and-act</td><td>분류자 1명이 타입 판정 → 스크립트가 전문 에이전트로 라우팅(트리아지)</td></tr>
+      <tr><td>Fan-out-and-synthesize</td><td>N조각 병렬 → 합성 1명이 병합(가장 흔함, 합성은 barrier)</td></tr>
+      <tr><td>Adversarial verification</td><td>각 발견을 별도 에이전트가 "반박하라" 지시로 검증 → 살아남은 것만</td></tr>
+      <tr><td>Generate-and-filter</td><td>후보 대량 생성 → 기준 필터/중복제거(네이밍·카피)</td></tr>
+      <tr><td>Tournament</td><td>N개가 같은 문제를 다른 접근으로 → 판정자가 승자 선정(아키텍처 결정)</td></tr>
+      <tr><td>Loop-until-done</td><td>규모를 모를 때 stop 조건(빈 라운드·빈 큐)까지 반복(감사·백로그)</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>캡 &amp; 트리거(공식).</strong> 동시 16개(정확히는 <code>min(16, 코어−2)</code>, 초과는 조용히 큐잉) · 런당 총 1,000개(초과 시 에러로 런어웨이 방지) · <code>parallel</code>/<code>pipeline</code> 호출당 최대 4,096 항목. 트리거는 프롬프트의 <code>ultracode</code> 키워드 / <code>/deep-research</code> / <code>/effort ultracode</code>(매 작업마다 자동 워크플로우, 세션 한정). 요구: Claude Code v2.1.154+, 유료 플랜. resume는 세션 내에서만(완료 agent는 캐시 즉시 반환). 서브에이전트는 항상 acceptEdits 모드(<a href="https://www.marktechpost.com/2026/05/28/anthropic-ships-claude-opus-4-8-alongside-dynamic-workflows-and-cheaper-fast-mode-with-workflows-capped-at-1000-subagents/">marktechpost</a>).</p>
+
+  <p><strong>실측.</strong> 플래그십 사례(고객 인터뷰 100건→프로토타입 3개)는 <strong>113 에이전트 · 1.95M 토큰 · 12.5분</strong>, 조율 JS는 토큰 0이었다. 반면 커뮤니티 검증 보고는 "62 에이전트로 5시간 캡을 18분에 소진" "작은 패키지 코드리뷰에 90 에이전트로 Max 한도 첫 도달" — <strong>비용 불투명·캡 소진이 1위 불만</strong>이다(<a href="https://www.productcompass.pm/p/claude-code-dynamic-workflows">productcompass</a>, <a href="https://news.ycombinator.com/item?id=48311705">HN</a>).</p>
+
+  <p><strong>함정.</strong> ① <strong>조용한 모델 다운그레이드</strong> — "Opus 200명인 줄 알았는데 실은 Haiku 200명, 에러도 경고도 없음" → 에이전트별 <code>model</code> 핀 고정. ② 막연한 프롬프트는 "200개가 다 똑같이 밋밋" → 잘 명세된 20-에이전트가 막연한 200-에이전트를 이긴다. ③ pipeline 쓸 자리에 parallel(barrier) = 가장 느린 형제 대기로 wall-clock 낭비. ④ Anthropic 자체 경고: "대화로 같은 작업하는 것보다 유의미하게 많은 토큰"(<a href="https://trilogyai.substack.com/p/claude-codes-dynamic-workflows-a">Trilogy/Proctor</a>).</p>
+
+  <p><strong>베스트 프랙티스.</strong> ① pipeline-first(barrier는 다음 단계가 전체 이전 결과를 진짜 필요로 할 때만) · ② 적대적/다관점 검증(판정자 분리·별도 컨텍스트·"반박하라" — 검증 아키텍처 &gt; 에이전트 수) · ③ loop-until-dry + 하드캡(MAX_ROUNDS) · ④ budget 가드 <code>while (budget.total &amp;&amp; budget.remaining() &gt; 50_000)</code>(<code>budget.total &amp;&amp;</code> 빠뜨리면 1,000캡까지 폭주) · ⑤ 병렬 파일 수정엔 <code>isolation: 'worktree'</code> · ⑥ 모델 티어링(반복=Haiku/Sonnet, 추론=Opus) · ⑦ 작은 슬라이스 먼저 테스트 후 <code>/workflows</code> 뷰로 실시간 토큰 확인 · ⑧ <code>/workflows</code>에서 <code>s</code>로 스크립트 저장 → <code>/&lt;name&gt;</code> 명령화.</p>
+
   <h2>지원님 환경에 가장 효율적인 적용 — Top 6</h2>
   <p>현재 글로벌 정책(얇은 OMC 하네스 + 가드/너지 hook, 빈 MCP 기본, dental 서브에이전트, open-design 루트, standing-opt-in Workflow)은 이미 2026 정설과 거의 일치한다. 그 위에 가장 비용 대비 효과가 큰 것만 추렸다.</p>
 
