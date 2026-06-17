@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>라즈베리파이 + 로컬·클라우드 LLM 엣지 AI 기기: 제작부터 판매까지 — jee599 reports</title>
+  <link rel="stylesheet" href="../assets/themes/linear-app.css">
+</head>
+<body>
+  <p><a href="../index.html">← 보고서 목록</a></p>
+  <h1>라즈베리파이 엣지 AI 기기: 제작부터 판매까지</h1>
+  <p class="meta">2026-06-17 · 읽기 13분 · 엣지AI, 라즈베리파이, 사업화, BOM</p>
+
+  <div class="summary">
+    <strong>핵심 요약</strong>
+    <p>하드웨어는 해자(moat)가 아니다. 돈은 두 곳에서만 나온다 — ① 기기를 미끼로 한 <strong>구독·서비스</strong>, ② <strong>폰으로 대체 안 되는 B2B 버티컬</strong>. 순수 소비자 AI 가젯은 죽었다(Humane $116M 헐값 매각). 살아남은 모델은 Plaud(기기 200만 대 + 구독 ARR $100M, 모금은 단 $6M).</p>
+    <p>제작 정답은 <strong>하이브리드</strong>: Pi 5(2025.12 인상가 $70~95) + 비전은 Hailo AI HAT+($70/$110), 음성·STT·TTS는 로컬, 한국어 생성·추론만 클라우드 Claude/GPT로. 브레인 API 비용은 기기당 <strong>하루 몇 센트</strong>($0.008~0.12) — 비용 병목은 LLM이 아니라 STT/TTS다.</p>
+    <p>한국이 유리한 이유 3가지: 무인매장 1.2만+ & 절도 1.1만 건/년(2024), 노인 키오스크 소외(65세+의 17.9%만 조작 가능) + 정부예산 AI돌봄(효돌 1만 대), 스마트팩토리 19.5%만 보급. 판매는 <strong>B2G·조달·구독</strong> 경로가 정석이다.</p>
+  </div>
+
+  <h2>배경 — 왜 지금인가</h2>
+  <p>세 곡선이 동시에 교차했다. 첫째, <strong>엣지 추론이 싸졌다</strong>. Pi 5에 $70짜리 Hailo AI HAT+를 꽂으면 YOLOv8 객체탐지가 CPU 0.75 FPS에서 <a href="https://wiki.seeedstudio.com/benchmark_on_rpi5_and_cm4_running_yolov8s_with_rpi_ai_kit/">약 29.5 FPS로</a> 뛴다. 2026년 1월엔 <a href="https://www.raspberrypi.com/news/introducing-the-raspberry-pi-ai-hat-plus-2-generative-ai-on-raspberry-pi-5/">AI HAT+ 2(Hailo-10H, 40 TOPS, 8GB, $130)</a>가 나오며 1.5B급 LLM을 온디바이스로 돌리는 길까지 열렸다.</p>
+  <p>둘째, <strong>클라우드 두뇌가 거의 공짜가 됐다</strong>. <a href="https://www.cloudzero.com/blog/claude-api-pricing/">Claude Haiku 4.5는 입력 $1·출력 $5 / 100만 토큰</a>. 음성 기기 한 대가 하루 30~100턴을 처리해도 LLM 토큰 비용은 하루 $0.04~0.12 수준이다. 기기에 지능을 "달아주는" 한계비용이 사라졌다.</p>
+  <p>셋째, <strong>한국에 검증된 수요가 쌓였다</strong>. 무인매장 폭증과 절도, 초고령사회 진입과 노인 디지털 소외, 인건비 상승이 한꺼번에 터지면서 "사람 없이 돌아가되 똑똑해야 하는" 기기에 돈을 쓰는 구매자 세그먼트가 여럿 생겼다. 이 보고서는 1인 개발자 관점에서 <em>어떻게 만들고(BOM·소프트웨어), 무엇을 만들고, 어디에 어떻게 파는가</em>를 숫자로 정리한다.</p>
+
+  <h2>트렌드 — 3가지 아키텍처와 돈 나오는 지점</h2>
+  <p>모든 엣지 AI 기기는 두뇌를 어디에 두느냐로 갈린다.</p>
+  <table>
+    <thead><tr><th>구조</th><th>두뇌</th><th>강점</th><th>약점</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A. 로컬 전용</strong></td><td>Pi 안 (Qwen2.5 1.5~3B, whisper.cpp, Piper)</td><td>오프라인·완전 프라이버시·API비 0</td><td>추론 약함(2~8 tok/s), 한국어 품질 들쭉날쭉</td></tr>
+      <tr><td><strong>B. 하이브리드</strong></td><td>Pi=감각/입출력, 클라우드=추론</td><td>똑똑함 + 물리적 존재감, 비용 푼돈</td><td>인터넷 필요, 데이터 거버넌스</td></tr>
+      <tr><td><strong>C. 씬클라이언트</strong></td><td>Pi=화면/스피커, 전부 클라우드</td><td>구현 최단</td><td>"폰으로 되잖아" 반박에 취약</td></tr>
+    </tbody>
+  </table>
+  <p>두 번째 큰 흐름은 <strong>"무인 계산"의 붕괴와 실용 니치의 부상</strong>이다. 2018~2022년의 천장카메라 자율결제 꿈은 경제성에서 무너졌다. 아마존은 미국 Fresh 식료품점에서 <a href="https://www.aboutamazon.com/news/retail/amazon-just-walk-out-dash-cart-grocery-shopping-checkout-stores">Just Walk Out을 2024년 4월 철수</a>하고 2026년 1월엔 Go/Fresh 매장 자체를 정리 중이다. Grabango는 <a href="https://www.paymentsdive.com/news/grabango-ceases-operations/729589/">약 $70M을 태우고 2024년 10월 폐업</a>했고, 유니콘이던 Standard AI는 자율결제를 버리고 매장 분석으로 피벗했다. 이유는 단순하다 — 무인계산대 셀프체크아웃이 이미 <a href="https://www.cstoredive.com/news/the-road-ahead-frank-beard-autonomous-checkout-intuit-done/739815/">10~15초면 끝나서</a> 카메라 자율결제의 시간 절감 가치가 비용을 못 넘긴다.</p>
+  <p>대신 <strong>인접 레이어가 실제로 팔린다</strong>: 무인매장 절도·이상행동 탐지(소수 카메라), 선반 결품 모니터링, 접근성 음성 키오스크. 1인 개발자가 노릴 곳은 "전 매대 자율결제"가 아니라 이 인접 레이어다.</p>
+
+  <h2>데이터 — 시장 규모와 가격</h2>
+  <p>엣지 AI 시장은 정의에 따라 2~3배 갈리지만 <strong>성장률 컨센서스(~20~22% CAGR)</strong>는 견고하다. 가장 신뢰도 높은 숫자는 엣지 AI 가속기 — 3개 분석사가 2024년 $7.45~7.74B로 ±4% 안에 수렴하고 모두 ~31% CAGR이다.</p>
+  <table>
+    <thead><tr><th>시장</th><th>현재</th><th>전망</th><th>CAGR</th><th>출처</th></tr></thead>
+    <tbody>
+      <tr><td>엣지 AI 전체</td><td>$24.9B (2025)</td><td>$66.5B (2030)</td><td>21.7%</td><td><a href="https://www.grandviewresearch.com/press-release/global-edge-ai-market">Grand View</a></td></tr>
+      <tr><td>엣지 AI 가속기 ★최고 컨센서스</td><td>$7.5~7.7B (2024)</td><td>$35~38B (2030)</td><td>~31%</td><td><a href="https://www.grandviewresearch.com/industry-analysis/edge-ai-accelerators-market-report">GVR·Mordor·Precedence</a></td></tr>
+      <tr><td>엣지 AI 소프트웨어</td><td>$1.95B (2024)</td><td>$8.9B (2030)</td><td>29.2%</td><td><a href="https://www.grandviewresearch.com/industry-analysis/edge-ai-software-market-report">Grand View</a></td></tr>
+      <tr><td>AI 카메라</td><td>$11~14B (2024-25)</td><td>$25~47B (2030)</td><td>17~22%</td><td><a href="https://www.mordorintelligence.com/industry-reports/ai-camera-market">Mordor·GVR</a></td></tr>
+      <tr><td>스마트농업 엣지기기</td><td>$2.9B (2024)</td><td>$16.7B (2034)</td><td>19.5%</td><td><a href="https://www.insightaceanalytic.com/report/smart-agriculture-edge-computing-devices-market/3159">InsightAce</a></td></tr>
+      <tr><td>의료 키오스크</td><td>$1.6B (2025)</td><td>$4.4B+ (2032+)</td><td>11~15%</td><td><a href="https://www.grandviewresearch.com/industry-analysis/medical-kiosk-market-report">Grand View</a></td></tr>
+      <tr><td>노인케어 로봇</td><td>$3.2~3.5B (2025)</td><td>$7.4B (2030)</td><td>12~16%</td><td><a href="https://www.grandviewresearch.com/industry-analysis/elder-care-assistive-robots-market-report">Grand View</a></td></tr>
+    </tbody>
+  </table>
+  <p>참고로 라즈베리파이 자체는 취미용이 아니다. <a href="https://www.investegate.co.uk/announcement/rns/raspberry-pi-holdings-wi---rpi/fy-2024-final-results/8809266">상장사 RPI의 FY2024</a>는 SBC·컴퓨트모듈 약 700만 대 판매, 매출 $259.5M이며 <strong>판매의 70%가 리셀러·OEM(산업용) 채널</strong>이다. 즉 엣지 제품의 기반 보드로 이미 산업에서 쓰인다.</p>
+
+  <h2>제작 ① — 하드웨어 BOM (2025.12 인상가 반영)</h2>
+  <p><strong>중요 정정:</strong> 라즈베리파이는 LPDDR4 메모리 쇼티지로 <a href="https://www.raspberrypi.com/news/1gb-raspberry-pi-5-now-available-at-45-and-memory-driven-price-rises/">2025년 12월 1일 전 모델 가격을 인상</a>했다(회사는 "일시적"이라 표현). 아래는 인상 후 미국 공식가다.</p>
+  <table>
+    <thead><tr><th>플랫폼</th><th>가격 (US 공식)</th><th>AI 성능</th><th>주 용도</th></tr></thead>
+    <tbody>
+      <tr><td>Pi 5 (4GB)</td><td>$70</td><td>CPU만</td><td>음성·경량 LLM 노드</td></tr>
+      <tr><td>Pi 5 (8GB)</td><td>$95</td><td>CPU만</td><td>비전 베이스</td></tr>
+      <tr><td>Pi 5 (16GB)</td><td>$145</td><td>CPU만</td><td>7B 로컬 LLM</td></tr>
+      <tr><td>Pi Zero 2 W</td><td>$15</td><td>약함</td><td>클라우드 오프로드 음성</td></tr>
+      <tr><td>AI HAT+ (Hailo-8L)</td><td>$70</td><td>13 TOPS</td><td>실시간 비전(YOLO 29 FPS)</td></tr>
+      <tr><td>AI HAT+ (Hailo-8)</td><td>$110</td><td>26 TOPS</td><td>다중 비전 동시</td></tr>
+      <tr><td>AI HAT+ 2 (Hailo-10H)</td><td>$130</td><td>40 TOPS + 8GB</td><td>온디바이스 1.5B LLM</td></tr>
+      <tr><td>Jetson Orin Nano Super</td><td>$249</td><td>67 TOPS(sparse)</td><td>생성형/VLM 로컬, CUDA</td></tr>
+      <tr><td>Coral USB</td><td>~$60</td><td>4 TOPS (정체)</td><td>비추천(SDK ~2023 정지)</td></tr>
+      <tr><td>RK3588 (Radxa Rock 5B)</td><td>$79~139</td><td>6 TOPS NPU</td><td>저가 대안(SW 미성숙)</td></tr>
+    </tbody>
+  </table>
+  <p>실제 제품 단가는 단품 + 미국 공식가 기준 아래와 같다(배송·세금 제외). <strong>한국 현실 보정 필수</strong>: Pi 5 8GB가 국내 정식 유통가로 <a href="https://www.icbanq.com/P015956550">약 29만~38.6만 원</a>, 즉 미국 공식가의 3.6~4.8배다. 양산 단계에선 Pi 5 보드 대신 <a href="https://www.raspberrypi.com/news/compute-module-5-on-sale-now/">CM5($45~95, -20~+85℃, 2036년까지 생산 보장)</a>로 가는 게 정석이다.</p>
+  <h3>(a) 음성/앰비언트 기기</h3>
+  <p>Pi 5 4GB($70) + <a href="https://www.seeedstudio.com/ReSpeaker-2-Mics-Pi-HAT.html">ReSpeaker 2-Mic pHAT($10~13)</a> + microSD 32GB($8~10) + 27W PSU($12) + 쿨러($5) + 케이스($10) ≈ <strong>$115~120</strong>. 클라우드 오프로드 설계면 Pi Zero 2 W로 ≈ $55~75. 원거리 음성이 필요하면 4-Mic 어레이($25~30).</p>
+  <h3>(b) 비전/모니터링 기기</h3>
+  <p>Pi 5 8GB($95) + <a href="https://www.pishop.us/product/raspberry-pi-camera-module-3/">Camera Module 3($29)</a> + AI HAT+ Hailo-8L($70) + M.2 HAT+($12) + NVMe 256GB($25~35) + PSU($12) + 쿨러($5) + 케이스($10) ≈ <strong>$258~278</strong>. 26 TOPS면 ≈ $300~320. 생성형/VLM이 무겁게 필요하면 Jetson Orin Nano Super 빌드($310~330)가 대안이다.</p>
+
+  <h2>제작 ② — 소프트웨어 스택과 로컬 vs 하이브리드 결정</h2>
+  <p>핵심 결론부터: <strong>STT·TTS·비전은 로컬, 한국어 생성·추론은 클라우드</strong>. 이게 한국 1인 개발자의 정답이다.</p>
+  <table>
+    <thead><tr><th>레이어</th><th>로컬 가능?</th><th>도구 / 성능</th></tr></thead>
+    <tbody>
+      <tr><td>음성인식(STT)</td><td>✅ 로컬</td><td><a href="https://www.promptquorum.com/power-local-llm/local-whisper-stt-comparison-2026">whisper.cpp tiny 15× / base 6× 실시간, &lt;1GB</a>, 한국어 OK</td></tr>
+      <tr><td>음성합성(TTS)</td><td>✅ 로컬</td><td><a href="https://medium.com/@vadikus/easy-guide-to-text-to-speech-on-raspberry-pi-5-using-piper-tts-cc5ed537a7f6">Piper Pi5 실시간</a>; 한국어는 piper-plus 포크</td></tr>
+      <tr><td>비전</td><td>✅ 로컬(가속기 필수)</td><td>Hailo + YOLOv8 27~30 FPS (CPU는 &lt;1 FPS, 사실상 불가)</td></tr>
+      <tr><td>호출어/VAD</td><td>✅ 로컬</td><td>openWakeWord(Pi) / <a href="https://www.kevinahrendt.com/micro-wake-word">microWakeWord(&lt;10ms)</a></td></tr>
+      <tr><td>경량 LLM(영어·분류·라우팅)</td><td>△ 로컬</td><td><a href="https://www.stratosphereips.org/blog/2025/6/5/how-well-do-llms-perform-on-a-raspberry-pi-5">Qwen2.5-1.5B ~8 tok/s, 3B 2~5 tok/s</a></td></tr>
+      <tr><td>한국어 생성·추론·긴 문맥</td><td>❌ 클라우드</td><td>Claude Haiku/Sonnet, GPT-5.x</td></tr>
+    </tbody>
+  </table>
+  <p>로컬 LLM의 한계는 명확하다. <a href="https://huggingface.co/Bllossom/llama-3.2-Korean-Bllossom-3B">Llama 3.2는 한국어를 공식 지원하지 않고</a>, 1~3B 모델은 한국어 이해에서 큰 폭으로 떨어진다. 그래서 한국어 응답 품질이 결정적인 제품은 무조건 하이브리드다. 오케스트레이션은 오픈 스택이 잘 갖춰져 있다 — <a href="https://www.home-assistant.io/blog/2025/02/13/voice-chapter-9-speech-to-phrase/">Home Assistant + Wyoming 프로토콜</a>로 호출어/STT/TTS를 분리 배치하고, <a href="https://glama.ai/blog/2025-08-20-implementing-mcp-on-edge-devices">MCP 서버로 Pi의 센서·액추에이터를 구조화된 함수로 노출</a>하면 클라우드 LLM이 자유 텍스트를 파싱하는 대신 로컬 하드웨어를 직접 호출한다.</p>
+  <h3>클라우드 브레인 비용 — 사실상 푼돈</h3>
+  <p>가정: 턴당 ~600 입력 / ~120 출력 토큰(텍스트만). STT/TTS는 별도이며 보통 더 큰 항목이다.</p>
+  <table>
+    <thead><tr><th>모델</th><th>입력/출력 (1M)</th><th>30턴/일</th><th>100턴/일</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.cloudzero.com/blog/claude-api-pricing/">Claude Haiku 4.5</a></td><td>$1 / $5</td><td>$0.036</td><td>$0.12</td></tr>
+      <tr><td>GPT-5.4-nano</td><td>$0.20 / $1.25</td><td>$0.008</td><td>$0.027</td></tr>
+      <tr><td>GPT-5.4-mini</td><td>$0.75 / $4.50</td><td>$0.030</td><td>$0.099</td></tr>
+    </tbody>
+  </table>
+  <p><strong>정정:</strong> OpenAI 저가 티어는 이제 gpt-4o-mini가 아니라 <a href="https://developers.openai.com/api/docs/pricing">gpt-5.4-mini/nano</a>다(4o-mini 가격표에서 내려감). 과거 "GPT mini가 Haiku보다 6~8배 싸다"는 더는 성립하지 않고, gpt-5.4-mini는 Haiku와 비슷한 가격대다. 어느 쪽이든 <strong>브레인 비용은 기기당 하루 몇 센트</strong>라 BM에서 무시 가능하다. 프롬프트 캐싱(<a href="https://www.cloudzero.com/blog/claude-api-pricing/">Haiku 캐시 읽기 $0.10/1M</a>)으로 시스템 프롬프트 비용을 더 깎는다.</p>
+  <p>데이터 거버넌스는 한국 B2B에서 진짜 제약이다. <a href="https://smartcity.go.kr/wp-content/uploads/2025/09/%EB%B3%84%EC%B2%A82-%EC%83%9D%EC%84%B1%ED%98%95-%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5AI-%EA%B0%9C%EB%B0%9C%C2%B7%ED%99%9C%EC%9A%A9%EC%9D%84-%EC%9C%84%ED%95%9C-%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4-%EC%B2%98%EB%A6%AC-%EC%95%88%EB%82%B4%EC%84%9C.pdf">PIPC 2025.8 생성형 AI 안내서</a>는 엔터프라이즈 API·암호화/토큰화·의료데이터 온프레미스를 권고한다. 즉 <strong>Pi에서 PII를 토큰화/마스킹한 뒤 클라우드로 보내는</strong> 하이브리드가 소매·의료에서 오히려 규제적으로 유리하다. Anthropic API는 <a href="https://anarlog.so/blog/anthropic-data-retention-policy/">7일 보존·학습 미사용·ZDR/HIPAA BAA</a>를 제공한다.</p>
+
+  <h2>해외 사례 — 무엇이 팔리고 무엇이 죽었나</h2>
+  <h3>미국 — "기기는 미끼, 구독이 마진"</h3>
+  <p>표준이 된 성공 공식은 단일 목적 기기 + 구독이다. 반대로 폰을 대체하겠다는 "만능 AI 박스"는 전멸했다. <a href="https://techcrunch.com/2025/02/18/humanes-ai-pin-is-dead-as-hp-buys-startups-assets-for-116m/">Humane AI Pin</a>은 $230M+를 모금하고도 목표 10만 대 중 1만 대만 팔렸으며 반품이 판매를 추월, HP에 $116M에 매각되고 기기는 벽돌이 됐다. <a href="https://www.techcrunch.com/2025/12/05/meta-acquires-ai-device-startup-limitless/">Limitless 펜던트</a>도 2025년 12월 Meta에 인수되며 하드웨어 판매를 접었다. 교훈: "폰 앱으로 되잖아" 테스트를 통과 못 하면 죽는다.</p>
+  <h3>비전 SaaS와 자율결제의 분기</h3>
+  <p>비전 보안은 가장 큰 성숙 시장이다. <a href="https://www.verkada.com/blog/leading-cloud-video-security/">Verkada는 VSaaS 1위(30,000+ 조직, 200만+ 대, ARR $1B 돌파)</a>로 <a href="https://www.prnewswire.com/news-releases/verkada-reaches-5-8b-valuation-with-investment-from-capitalg-302631378.html">2025년 12월 $5.8B 밸류</a>를 받았는데, 구조가 정확히 "온디바이스 탐지 + 클라우드 자연어 검색"이다. 반면 자율결제는 AiFi처럼 <a href="https://www.prnewswire.com/news-releases/aifi-celebrates-stadium-growth-with-nfl-partnerships-and-spatial-intelligence-expansion-into-new-industries-302282668.html">경기장 같은 고마찰·고마진 캡티브 공간</a>으로 좁힌 곳만 살아남았다.</p>
+
+  <h2>한국 현황 — 검증된 3대 수요</h2>
+  <h3>① 무인매장 + 절도</h3>
+  <p>무인매장은 2025년 말 <a href="https://www.sentv.co.kr/article/view/sentv202601160103">약 1.2만+ 개로 3년 만에 2배 이상</a>이 됐다. 그런데 절도가 같이 폭증했다 — 전국 무인점포 절도는 3,514(2021) → 6,018(2022) → <strong>10,847(2023) → 약 11,015건(2024 최고치)</strong>으로 늘었다(경찰청). 대부분 매장이 CCTV만 의존한다. 그래서 <a href="https://www.sedaily.com/article/20026006">S-1(에스원)의 무인점포 AI 보안 계약이 전년比 +33%</a> 성장했다. <strong>여기가 1인 개발자에게 가장 깔끔한 진입점</strong>이다 — 소수 카메라 이상행동 탐지는 Pi+Hailo로 충분하고, LLM급 추론이 필요 없다.</p>
+  <h3>② 노인 디지털 소외 + AI 돌봄(B2G)</h3>
+  <p>한국은 2024년 12월 초고령사회에 진입(2025년 65세+ 20.3%)했다. 그런데 <a href="https://news.koreanbar.or.kr/news/articleView.html?idxno=32941">65세+ 가구의 17.9%만 주문·접수 키오스크를 조작</a>할 수 있고 80~84세는 2.3%에 그친다. 이게 접근성 음성 키오스크 수요를 만든다. 동시에 정부예산 AI 돌봄 시장이 이미 규모화됐다 — <a href="https://www.thebell.co.kr/free/content/ArticleView.asp?key=202503070833088500102185">효돌 1만+ 대</a>, <a href="https://www.koit.co.kr/news/articleView.html?idxno=127284">미스터마인드 8,500명/54개 지자체</a>. 핵심은 판매 경로다 — 조달청 혁신제품으로 등록하면 <strong>3년 수의계약(무경쟁)</strong> 채널이 열린다.</p>
+  <h3>③ 스마트팩토리 미보급 + B2B SaaS 성장</h3>
+  <p>스마트팩토리 보급률은 중소·중견 중 <a href="https://www.ezyeconomy.com/news/articleView.html?idxno=212577">19.5%(16.3만 중 3.2만 사)에 불과</a>하고 75.5%가 기초 수준이라 엣지 비전 QC 여지가 크다. 한국 B2B SaaS는 <a href="https://platum.kr/archives/193728">2025년 ₩1.14조, ~15% CAGR</a>로 작지만 성장 중이고, 정부 클라우드 바우처가 SME의 구독 도입 장벽을 낮춘다.</p>
+
+  <h2>산업별 판매 전략 — 누가 사고, 어떻게 파는가</h2>
+  <p>제품은 "폰 앱이 진짜로 부적절한" 버티컬 하나에 집중한다. 각 칸의 핵심은 <strong>구매자·결제 경로·기기 정당성</strong>이다.</p>
+  <table>
+    <thead><tr><th>산업</th><th>제품</th><th>구매자 / 결제</th><th>아키텍처</th></tr></thead>
+    <tbody>
+      <tr><td>무인매장 ★</td><td>이상행동·절도 탐지 카메라 노드</td><td>점주 월 구독, 프랜차이즈 본부</td><td>로컬 비전(Hailo)</td></tr>
+      <tr><td>보안/모니터링 ★</td><td>자연어 보안카메라("택배 오면 알려줘")</td><td>점포·소상공인 구독, 글로벌 가능</td><td>로컬 탐지 + 클라우드 요약</td></tr>
+      <tr><td>의료/치과</td><td>대기실 접수·안내 음성 키오스크</td><td>병의원 월 구독</td><td>로컬 STT/TTS + 클라우드(PII 토큰화)</td></tr>
+      <tr><td>노인 돌봄</td><td>말동무 + 안부/이상 알림</td><td>지자체 조달(수의계약)</td><td>하이브리드(낙상은 전용 레이더)</td></tr>
+      <tr><td>축산/농업</td><td>가축 건강·이상 온디바이스 비전</td><td>농가·조합, 정부 보급사업</td><td>로컬(대역폭 부족이 정당성)</td></tr>
+      <tr><td>제조</td><td>결함 검사·예지보전 엣지</td><td>중소 제조사, MSS 보조금</td><td>로컬(저지연 sub-40ms)</td></tr>
+    </tbody>
+  </table>
+  <p><strong>BM은 기기 단발 판매 금지가 원칙이다.</strong> 하드웨어 매출총이익은 잔혹한 <a href="https://calcix.net/guides/business-startup/hardware-vs-software-gross-margin-strategy-guide">20~40%(BOM×2.5~4 가격)</a>인 반면 부착 소프트웨어/구독은 85%+다. <a href="https://cryptobriefing.com/plaud-100m-arr-ai-notetakers/">Plaud가 기기 200만 대 + 구독 ARR $100M</a>을 단 $6M 모금으로 만든 게 증거다. 기기는 "스위칭 코스트를 만드는 미끼", 마진은 구독에서.</p>
+  <p>인증은 회피 가능하다. <a href="https://compliancetesting.com/fcc-testing-fcc-certification-for-raspberry-pi-devices/">사전인증된 RF 모듈(모듈러 승인)</a>을 쓰면 비용·기간이 급감한다. 한국 KC는 무선 포함 시 <a href="https://k-rnd.com/electronics-certification-guide/">대략 ₩3M~6M·3~4주</a>인데(FCC/CE가 KC를 면제해주지 않음), 정작 1인 개발자를 죽이는 건 인증이 아니라 <strong>물류·반품·CS</strong>다 — <a href="https://blog.winsbs.com/2025/09/18/crowdfunding-fulfillment-101/">크라우드펀딩 펀딩 성공작의 약 61%가 배송 지연</a>, 주소 오류로 ~15% 반품, 관세로 ~30% 비용 증가가 BOM 계산에서 빠진 채 마진을 갉아먹는다.</p>
+
+  <h2>실사례</h2>
+  <div class="case-box">
+    <strong>Plaud (미국/중국) — 하드웨어+구독 정석</strong><br>
+    회의·진료·법정처럼 노트북·폰을 꺼내기 어색한 맥락을 노린 단일 목적 녹음기 + 전사/요약 구독. 결과: 기기 200만+ 대, 구독 ARR $100M, 총 ARR ~$250M(+83% YoY)을 단 $6M 모금으로. <a href="https://cryptobriefing.com/plaud-100m-arr-ai-notetakers/">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>Humane AI Pin (미국) — 표준 실패 사례</strong><br>
+    폰을 대체하려던 화면 없는 AI 핀. 결과: $230M+ 모금, 1만 대 판매(목표 10만), 반품&gt;판매, HP에 $116M 매각·2025년 2월 벽돌화. "왜 폰앱이 아니지?"를 못 넘긴 전형. <a href="https://techcrunch.com/2025/02/18/humanes-ai-pin-is-dead-as-hp-buys-startups-assets-for-116m/">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>Verkada (미국) — 온디바이스 탐지 + 클라우드 자연어 검색</strong><br>
+    카메라 온디바이스 탐지가 클라우드 비전-언어 모델 검색("지게차 운전 중인 사람")을 먹인다. 결과: VSaaS 1위, 30,000+ 조직·200만+ 대·ARR $1B+, $5.8B 밸류(2025.12). <a href="https://www.verkada.com/blog/ai-powered-search/">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>효돌 · 미스터마인드 (한국) — B2G AI 돌봄</strong><br>
+    독거노인용 대화·복약·안부 로봇을 지자체에 공급. 효돌 1만+ 대(2025 매출 100억 목표), 미스터마인드 8,500명/54개 지자체·29개 센터. 경로: 조달청 혁신제품 등록 → 3년 수의계약. <a href="https://www.koit.co.kr/news/articleView.html?idxno=127284">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>제로아이즈 · S-1 (한국) — 무인매장 손실방지</strong><br>
+    무인 스터디카페·예약공간 관리/손실방지(제로아이즈 ~600개 무인공간), S-1은 무인점포 AI 보안 계약 +33% YoY·최대 1천만원 손실보상. 한국의 진짜 돈은 자율결제가 아니라 <strong>보안·접근통제</strong>에 있음을 보여줌. <a href="https://www.sedaily.com/article/20026006">출처</a>
+  </div>
+  <div class="case-box">
+    <strong>Intflow EdgeFarm (한국) — 축산 온디바이스 비전</strong><br>
+    표준 CCTV + 자체 온디바이스 엣지로 양돈 개체수·체중·건강 관리(영상 100만+ 시간 학습). 대역폭 부족한 축사라 로컬 추론이 필수. 결과: 56개 양돈장, 10개국 수출, 5년간 독자기술로 구축. <a href="https://www.newstheai.com/news/articleView.html?idxno=6459">출처</a>
+  </div>
+
+  <div class="action-box">
+    <h3>jee599 액션 — 이번 주 ~ 한 달</h3>
+    <ul>
+      <li><strong>이번 주 비전 PoC 1개</strong>: Pi 5 8GB + AI HAT+ Hailo-8L 1대로 <code>hailo-rpi5-examples</code>의 YOLOv8을 띄워 무인매장 이상행동/체류 탐지 데모. 정당성·언어의존 낮음·글로벌 확장성 모두 1위 버티컬.</li>
+      <li><strong>하이브리드 음성 루프 1개</strong>: whisper.cpp + Piper(piper-plus 한국어) + Claude Haiku로 치과 대기실 접수·안내. 기존 dental 자산(의료법 가드)과 연결하되 기능은 '안내'로만 한정(진단·유인 금지).</li>
+      <li><strong>버티컬 1개만 고른다</strong>: 자연어 보안/무인매장 손실방지(글로벌) vs 치과 접수(기존 자산). "폰앱 테스트"를 통과하는 쪽만. 둘 다 하지 말 것.</li>
+      <li><strong>BM은 기기(미끼)+월 구독</strong>으로 설계. 단발 판매 금지. KC 회피 위해 사전인증 RF 모듈/HAT 사용, 양산 시 CM5 전환 가정.</li>
+      <li><strong>한국 진입은 B2G 경로 조사</strong>: 조달청 혁신제품 등록(돌봄·무인매장 손실방지), 정부 클라우드 바우처로 SME 구독 진입장벽 완화. 1인 운영의 진짜 리스크는 물류·반품·CS임을 BOM에 미리 반영.</li>
+    </ul>
+  </div>
+
+  <div class="source-box">
+    <strong>출처</strong>
+    <ol>
+      <li><a href="https://www.raspberrypi.com/news/1gb-raspberry-pi-5-now-available-at-45-and-memory-driven-price-rises/">Raspberry Pi — 가격 인상(2025.12.1) & 1GB $45</a></li>
+      <li><a href="https://www.raspberrypi.com/news/raspberry-pi-ai-hat/">Raspberry Pi — AI HAT+ (13/26 TOPS, $70/$110)</a></li>
+      <li><a href="https://www.raspberrypi.com/news/introducing-the-raspberry-pi-ai-hat-plus-2-generative-ai-on-raspberry-pi-5/">Raspberry Pi — AI HAT+ 2 (Hailo-10H, $130, 2026.1)</a></li>
+      <li><a href="https://developer.nvidia.com/blog/nvidia-jetson-orin-nano-developer-kit-gets-a-super-boost/">NVIDIA — Jetson Orin Nano Super ($249, 67 TOPS)</a></li>
+      <li><a href="https://www.stratosphereips.org/blog/2025/6/5/how-well-do-llms-perform-on-a-raspberry-pi-5">Stratosphere Lab — Pi 5 로컬 LLM 벤치마크</a></li>
+      <li><a href="https://wiki.seeedstudio.com/benchmark_on_rpi5_and_cm4_running_yolov8s_with_rpi_ai_kit/">Seeed — YOLOv8 on Pi 5 + AI Kit (0.75→29.5 FPS)</a></li>
+      <li><a href="https://www.promptquorum.com/power-local-llm/local-whisper-stt-comparison-2026">PromptQuorum — whisper.cpp 2026 벤치마크</a></li>
+      <li><a href="https://www.cloudzero.com/blog/claude-api-pricing/">CloudZero — Claude API 가격(Haiku 4.5 $1/$5)</a></li>
+      <li><a href="https://www.home-assistant.io/blog/2025/02/13/voice-chapter-9-speech-to-phrase/">Home Assistant — Wyoming 음성 스택</a></li>
+      <li><a href="https://smartcity.go.kr/wp-content/uploads/2025/09/%EB%B3%84%EC%B2%A82-%EC%83%9D%EC%84%B1%ED%98%95-%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5AI-%EA%B0%9C%EB%B0%9C%C2%B7%ED%99%9C%EC%9A%A9%EC%9D%84-%EC%9C%84%ED%95%9C-%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4-%EC%B2%98%EB%A6%AC-%EC%95%88%EB%82%B4%EC%84%9C.pdf">PIPC — 생성형 AI 개인정보 처리 안내서(2025.8)</a></li>
+      <li><a href="https://www.grandviewresearch.com/press-release/global-edge-ai-market">Grand View — 엣지 AI 시장</a></li>
+      <li><a href="https://www.grandviewresearch.com/industry-analysis/edge-ai-accelerators-market-report">Grand View — 엣지 AI 가속기 시장</a></li>
+      <li><a href="https://www.sentv.co.kr/article/view/sentv202601160103">서울경제TV — 무인매장 1.2만+ & 절도(2026.1)</a></li>
+      <li><a href="https://news.koreanbar.or.kr/news/articleView.html?idxno=32941">대한변협신문 — 노인 키오스크 조작 17.9%</a></li>
+      <li><a href="https://www.sedaily.com/article/20026006">서울경제 — S-1 무인점포 AI 보안 +33%</a></li>
+      <li><a href="https://www.thebell.co.kr/free/content/ArticleView.asp?key=202503070833088500102185">더벨 — 효돌 1만+ 대</a></li>
+      <li><a href="https://www.koit.co.kr/news/articleView.html?idxno=127284">KOIT — 미스터마인드 8,500명/54지자체</a></li>
+      <li><a href="https://cryptobriefing.com/plaud-100m-arr-ai-notetakers/">Crypto Briefing — Plaud ARR $100M</a></li>
+      <li><a href="https://techcrunch.com/2025/02/18/humanes-ai-pin-is-dead-as-hp-buys-startups-assets-for-116m/">TechCrunch — Humane AI Pin 매각</a></li>
+      <li><a href="https://www.verkada.com/blog/ai-powered-search/">Verkada — AI-Powered Search</a></li>
+      <li><a href="https://calcix.net/guides/business-startup/hardware-vs-software-gross-margin-strategy-guide">Calcix — 하드웨어 vs 소프트웨어 마진</a></li>
+      <li><a href="https://blog.winsbs.com/2025/09/18/crowdfunding-fulfillment-101/">WinSBS — 크라우드펀딩 물류(61% 지연)</a></li>
+      <li><a href="https://www.newstheai.com/news/articleView.html?idxno=6459">뉴스더AI — Intflow EdgeFarm 축산 엣지</a></li>
+      <li><a href="https://www.aboutamazon.com/news/retail/amazon-just-walk-out-dash-cart-grocery-shopping-checkout-stores">Amazon — Just Walk Out 철수/Dash Cart</a></li>
+    </ol>
+  </div>
+</body>
+</html>
