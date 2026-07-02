@@ -1,3 +1,11 @@
+# ── publish whitelist: 이 공개 GitHub Pages repo에는 큐레이션 경로만 커밋 가능 ──
+/*
+!/.gitignore
+!/README.md
+!/index.html
+!/assets
+!/posts
+# ── junk ──
 .DS_Store
 *.swp
 *.swo
