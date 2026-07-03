@@ -10,3 +10,4 @@
 *.swp
 *.swo
 .auto-push-enabled
+*.bak-*

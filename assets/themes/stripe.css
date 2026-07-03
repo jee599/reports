@@ -1,253 +1,300 @@
-/* ── jee599 reports — Stripe direction (핀테크 화이트 + 딥네이비 + 퍼플) ──
-   DNA(OD stripe/DESIGN.md 실값): bg #ffffff, heading #061b31(딥네이비),
-   body #64748d, label #273951, border #e5edf5, accent #533afd(퍼플),
-   hover #4434d4, dark section #1c1e54, 블루틴트 멀티레이어 섀도
-   rgba(50,50,93,.25), radius 4~8px 보수적, 헤드라인 weight 300 + ss01,
-   mono SourceCodePro, 숫자 tnum. 한글은 Pretendard 폴백.
-------------------------------------------------------------------- */
+/* jee599 reports — Stripe direction (v3): 라이트 캔버스 · 딥네이비 잉크 · 블러퍼플 accent 1색.
+   DNA(OD stripe/DESIGN.md 실값): ink #061b31, accent #533afd, hairline #e5edf5, panel #f6f9fc.
+   DESIGN.md의 다크 섹션(#1c1e54)·mono 라벨·옅은 본문은 v3 하드룰로 폐기/클램프. */
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500;700&display=swap');
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 
 :root {
-  --bg:        #ffffff;
-  --ink:       #061b31;   /* 제목 — 딥네이비, 절대 검정 아님 */
-  --label:     #273951;   /* 라벨/강조 본문 */
-  --body:      #64748d;   /* 본문 슬레이트 */
-  --line:      #e5edf5;   /* 보더 */
-  --fill:      #f6f9fc;   /* 옅은 면 */
-  --accent:    #533afd;   /* Stripe 퍼플 — 유일한 인터랙티브 색 */
-  --accent-hd: #4434d4;   /* hover */
-  --lavender:  #b9b9f9;   /* subdued 보더/라벨 */
-  --dark:      #1c1e54;   /* 브랜드 다크 섹션 */
-
-  --sans: 'sohne-var', 'SF Pro Display', 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --mono: 'Source Code Pro', 'SFMono-Regular', ui-monospace, Menlo, monospace;
-
-  --r-sm: 4px;
-  --r:    6px;
-  --r-lg: 8px;
-  --elev:    rgba(50,50,93,0.25) 0px 30px 45px -30px, rgba(0,0,0,0.1) 0px 18px 36px -18px;
-  --ambient: rgba(23,23,23,0.08) 0px 15px 35px 0px;
+  --bg:          #ffffff;
+  --page:        #f4f6f9;
+  --ink:         #061b31;   /* 딥네이비 제목 */
+  --body:        #3d434f;   /* v3 body 클램프 */
+  --muted:       #66707e;
+  --line:        #e5edf5;   /* 블루틴트 hairline */
+  --panel:       #f6f9fc;
+  --accent:      #533afd;   /* Stripe 블러퍼플 — 유일한 accent */
+  --accent-deep: #4434d4;
+  --accent-tint: rgba(83,58,253,0.06);
+  --sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, monospace;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SHARED CLASS CONTRACT — 모든 테마 동일 (Document Design Language v3)
+   §1 타이포 · §2 컬러/accent 예산 · §3 라이트 마스트헤드/콜아웃 · §5 AI-slop
+   금지 · §6 A4 인쇄. 테마는 :root 토큰(색·accent)만 다르고 구조는 동일하다.
+   라벨/캡션/각주 바닥 12.5px(0.8125rem) · Pretendard 실로드 · mono는
+   code·문서번호·섹션카운터 전용 · 한글 자간 0 · 라이트 캔버스 고정.
+   ═══════════════════════════════════════════════════════════════════ */
 
 * { box-sizing: border-box; }
 
+html { background: var(--page); }
+
 body {
   font-family: var(--sans);
-  font-feature-settings: "ss01";
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.7;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.74;
+  letter-spacing: -0.01em;               /* 한글 본문 미세 타이트닝(음수만) */
   color: var(--body);
   background: var(--bg);
-  max-width: 860px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 4rem 2rem 6rem;
+  padding: 3.5rem 2.4rem 5rem;
   counter-reset: section;
   word-break: keep-all;
+  text-wrap: pretty;
+  font-feature-settings: "tnum";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* 목록 복귀 */
-body > p:first-child { margin: 0 0 2.5rem; }
+/* ── 목록 복귀 링크 (인쇄 시 숨김) — sans, 자간 0(한글 포함) ───────── */
+body > p:first-child { margin: 0 0 2.4rem; }
 body > p:first-child a {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--body);
+  font-family: var(--sans);
+  font-size: 0.8125rem;                   /* 13px */
+  font-weight: 600;
+  color: var(--muted);
   text-decoration: none;
 }
 body > p:first-child a:hover { color: var(--accent); }
 
-/* ── 타이틀 — weight 300 속삭이는 권위, 타이트 트래킹 ─────────── */
-h1 {
-  font-size: clamp(2.3rem, 6vw, 3rem);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  line-height: 1.12;
-  color: var(--ink);
-  margin: 0 0 1rem;
+/* ── 라이트 마스트헤드 (v3 §3) ──────────────────────────────────── */
+.masthead { margin: 0 0 2.6rem; }
+.mast-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.05rem;
 }
-
-.meta {
-  font-size: 0.82rem;
+.kicker {                                 /* Latin 라벨: tracking 허용 ≤0.06em */
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.doc-meta {                               /* 문서번호 = mono 허용 */
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.masthead h1, h1 {
+  font-size: 2rem;                        /* 32px (v3 30–34) */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.22;
+  color: var(--ink);
+  margin: 0;
+}
+.dek {
+  font-size: 1.0625rem;                   /* 17px */
   font-weight: 400;
+  line-height: 1.6;
   color: var(--body);
-  margin: 0 0 2.75rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid var(--line);
+  margin: 0.9rem 0 0;
+  max-width: 64ch;
+}
+.accent-rule {
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 1.3rem 0 0;
+}
+.meta {
+  font-size: 0.8125rem;                   /* 13px */
+  font-weight: 400;
+  color: var(--muted);
+  margin: 1.05rem 0 0;
   font-variant-numeric: tabular-nums;
 }
 
-/* ── 요약 = 블루틴트 elevated 카드 ─────────────────────────── */
+/* ── 핵심 요약 = 라이트 패널 + 좌측 3px accent 룰 (§3) ───────────── */
 .summary {
-  background: var(--bg);
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--elev);
-  padding: 1.6rem 1.8rem;
-  margin: 0 0 3.25rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 1.35rem 1.6rem;
+  margin: 2.4rem 0 0;
+  break-inside: avoid;
 }
-.summary strong, .summary b {
+.summary strong, .summary b {            /* 한글 라벨 "핵심 요약": sans·자간0·mono아님 */
   display: block;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
   color: var(--accent);
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.7rem;
 }
-.summary p  { font-size: 1.08rem; color: var(--label); line-height: 1.55; margin: 0.55rem 0; }
+.summary p  { font-size: 15px; color: var(--body); line-height: 1.7; margin: 0.5rem 0; }
 .summary ul, .summary ol { margin: 0; padding-left: 1.2rem; }
-.summary li { margin: 0.55rem 0; font-size: 1.04rem; color: var(--label); line-height: 1.55; }
+.summary li { margin: 0.45rem 0; font-size: 15px; color: var(--body); line-height: 1.7; }
 .summary li::marker { color: var(--accent); }
 
-/* ── 섹션 헤더 — 퍼플 모노 카운터 + weight 300 네이비 ────────── */
+/* ── 섹션: 넘버 + h2 + hairline (§3) ─────────────────────────────── */
 h2 {
-  font-size: 1.7rem;
-  font-weight: 300;
-  letter-spacing: -0.022em;
-  line-height: 1.15;
+  font-size: 1.3125rem;                   /* 21px (v3 20–21) */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
   color: var(--ink);
-  margin: 3.5rem 0 1.1rem;
+  margin: 3rem 0 1rem;                    /* 섹션 간 여백 ≥48px */
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--line);
 }
-h2::before {
+h2::before {                              /* 섹션 카운터 숫자 = mono 허용 */
   counter-increment: section;
   content: counter(section, decimal-leading-zero);
   display: block;
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--accent);
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.35rem;
+  font-variant-numeric: tabular-nums;
 }
-
 h3 {
-  font-size: 1.1rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-size: 1.03125rem;                  /* 16.5px */
+  font-weight: 650;
+  letter-spacing: -0.005em;
   color: var(--ink);
-  margin: 2rem 0 0.5rem;
+  margin: 1.9rem 0 0.4rem;
 }
 
-p, li { margin: 0.7rem 0; }
-strong, b { font-weight: 400; color: var(--label); }
+p, li { margin: 0.65rem 0; }
+strong, b { font-weight: 700; color: var(--ink); }   /* 본문 강조 = ink 700, 색 bold 금지 */
 
-/* ── 링크 = 퍼플 1색 ──────────────────────────────────────── */
-a { color: var(--accent); text-decoration: none; font-weight: 400; }
-a:hover { color: var(--accent-hd); text-decoration: underline; text-underline-offset: 3px; }
+a { color: var(--accent); text-decoration: none; font-weight: 500; }
+a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
 
-/* ── 표 — 금융 데이터: tnum, 정밀 보더 ─────────────────────── */
+/* ── 표 — hairline, tnum, 그림자 금지 ───────────────────────────── */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.75rem 0;
-  font-size: 0.92rem;
+  margin: 1.6rem 0;
+  font-size: 0.9375rem;                   /* 15px */
   font-variant-numeric: tabular-nums;
   border: 1px solid var(--line);
-  border-radius: var(--r);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--ambient);
+  break-inside: avoid;
 }
-thead th {
-  background: var(--fill);
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--label);
+thead th {                               /* 헤더 한글 가능 → 자간0·대문자변환 없음 */
+  background: var(--panel);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--muted);
   text-align: left;
-  padding: 0.75rem 0.95rem;
+  padding: 0.7rem 0.95rem;
   border-bottom: 1px solid var(--line);
 }
 tbody td {
-  padding: 0.7rem 0.95rem;
+  padding: 0.68rem 0.95rem;
   border-bottom: 1px solid var(--line);
-  color: var(--label);
+  color: var(--body);
   vertical-align: top;
 }
 tbody tr:last-child td { border-bottom: none; }
 
-/* ── 사례 — 화이트 카드 + 앰비언트 섀도 ────────────────────── */
+/* ── 실사례 = hairline 구분 리스트 행 (§5-12 박스 피로 방지) ─────── */
 .case-box {
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  box-shadow: var(--ambient);
-  padding: 1.05rem 1.35rem;
-  margin: 0.9rem 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.85rem 0;
+  margin: 0;
+  break-inside: avoid;
 }
-.case-box strong { color: var(--ink); font-weight: 400; font-size: 1.03rem; }
+.case-box strong { color: var(--ink); font-weight: 700; font-size: 15px; }
 
-/* ── 액션 — 브랜드 다크 #1c1e54 섹션 ───────────────────────── */
+/* ── 액션 = 라이트 accent-tint 콜아웃 + 좌측 3px accent 룰 (§3) ──── */
 .action-box {
-  background: var(--dark);
-  color: rgba(255,255,255,0.72);
-  border-radius: var(--r-lg);
-  padding: 1.8rem 1.9rem 1.5rem;
-  margin-top: 3.5rem;
-  box-shadow: var(--elev);
-}
-.action-box::before {
-  content: "ACTION — 1인 개발자";
-  display: block;
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  margin-bottom: 0.95rem;
-}
-.action-box h3 { color: #ffffff; margin: 0 0 0.85rem; font-size: 1.25rem; font-weight: 300; letter-spacing: -0.015em; }
-.action-box ul { padding-left: 1.15rem; margin: 0; }
-.action-box li { margin: 0.55rem 0; }
-.action-box strong, .action-box b { color: #ffffff; }
-.action-box a { color: var(--lavender); }
-.action-box a:hover { color: #ffffff; }
-
-/* ── 출처 ──────────────────────────────────────────────────── */
-.source-box {
-  background: var(--fill);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 1.2rem 1.45rem;
-  margin: 3rem 0 0;
-  font-size: 0.84rem;
-  line-height: 1.6;
+  background: var(--accent-tint);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
   color: var(--body);
+  padding: 1.4rem 1.6rem;
+  margin: 2.8rem 0 0;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
-.source-box strong {
+.action-box::before {                    /* eyebrow = Latin 전용 "ACTION" */
+  content: "ACTION";
   display: block;
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--label);
-  margin-bottom: 0.7rem;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 0.55rem;
+}
+.action-box h3 { color: var(--ink); margin: 0 0 0.55rem; font-size: 1.03125rem; font-weight: 700; }
+.action-box ul { padding-left: 1.15rem; margin: 0; }
+.action-box li { margin: 0.45rem 0; color: var(--body); }
+.action-box strong, .action-box b { color: var(--ink); }
+.action-box a { color: var(--accent-deep); }
+
+/* ── 출처 = 라이트 패널 ─────────────────────────────────────────── */
+.source-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.15rem 1.4rem;
+  margin: 2.8rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--muted);
+  break-inside: avoid;
+}
+.source-box strong {                     /* 한글 라벨 "출처": sans·자간0 */
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.55rem;
 }
 .source-box ol { padding-left: 1.3rem; margin: 0; }
-.source-box li { margin: 0.4rem 0; }
+.source-box li { margin: 0.35rem 0; }
+.source-box a { color: var(--muted); font-weight: 500; }
+.source-box a:hover { color: var(--accent); }
 
 code {
   font-family: var(--mono);
-  font-weight: 500;
-  background: var(--fill);
+  background: var(--panel);
   border: 1px solid var(--line);
   padding: 0.1em 0.4em;
-  border-radius: var(--r-sm);
+  border-radius: 4px;
   font-size: 0.85em;
   color: var(--ink);
 }
 
+/* ── 반응형 ─────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
-  body { font-size: 16px; padding: 2.5rem 1.25rem 4rem; }
-  h1 { font-size: 2rem; }
+  body { padding: 2.5rem 1.25rem 4rem; }
+  .mast-top { flex-direction: column; gap: 0.35rem; }
+}
+
+/* ── A4 인쇄 (v3 §6) — 라이트 강제·박스 무분할·백링크 숨김 ───────── */
+@media print {
+  html, body { background: #ffffff; }
+  body { max-width: none; margin: 0; padding: 0; font-size: 10.5pt; line-height: 1.6; }
+  body > p:first-child { display: none; }            /* ← 보고서 목록 숨김 */
+  .summary, .case-box, .action-box, .source-box, table, tr, img, h2, h3 { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+  .action-box, .summary { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: var(--accent); text-decoration: none; }
+  @page { margin: 16mm 14mm; }
 }
