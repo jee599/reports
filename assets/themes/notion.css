@@ -116,28 +116,34 @@ body > p:first-child a:hover { color: var(--accent); }
   font-variant-numeric: tabular-nums;
 }
 
-/* ── 핵심 요약 = 라이트 패널 + 좌측 3px accent 룰 (§3) ───────────── */
+/* ── 핵심 요약 = 중립 패널, 좌측 accent 룰 금지('손톱' AI 티) (§3 v3.1) ── */
 .summary {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 12px 12px 0;
+  border-radius: 12px;
   padding: 1.35rem 1.6rem;
   margin: 2.4rem 0 0;
   break-inside: avoid;
 }
 .summary strong, .summary b {            /* 한글 라벨 "핵심 요약": sans·자간0·mono아님 */
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--sans);
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--ink);
   margin-bottom: 0.7rem;
+}
+.summary strong::before, .summary b::before {   /* 라벨 점이 accent 역할 */
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex: none;
 }
 .summary p  { font-size: 15px; color: var(--body); line-height: 1.7; margin: 0.5rem 0; }
 .summary ul, .summary ol { margin: 0; padding-left: 1.2rem; }
 .summary li { margin: 0.45rem 0; font-size: 15px; color: var(--body); line-height: 1.7; }
-.summary li::marker { color: var(--accent); }
+.summary li::marker { color: var(--muted); font-weight: 600; }
 
 /* ── 섹션: 넘버 + h2 + hairline (§3) ─────────────────────────────── */
 h2 {
@@ -218,11 +224,11 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .case-box strong { color: var(--ink); font-weight: 700; font-size: 15px; }
 
-/* ── 액션 = 라이트 accent-tint 콜아웃 + 좌측 3px accent 룰 (§3) ──── */
+/* ── 액션 = 중립 패널 콜아웃, 좌측 accent 룰 금지 (§3 v3.1) ──────── */
 .action-box {
-  background: var(--accent-tint);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 12px 12px 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   color: var(--body);
   padding: 1.4rem 1.6rem;
   margin: 2.8rem 0 0;
@@ -237,7 +243,7 @@ tbody tr:last-child td { border-bottom: none; }
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--accent);
+  color: var(--ink);
   margin-bottom: 0.55rem;
 }
 .action-box h3 { color: var(--ink); margin: 0 0 0.55rem; font-size: 1.03125rem; font-weight: 700; }
