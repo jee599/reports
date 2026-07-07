@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>fable-mode v1.4 — Opus를 Fable 5처럼 · 실측 보고</title>
+  <!-- v3: Pretendard Variable 실제 로드 (선언만 금지 — Document Design Language v3 §1) -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <style>
+    /* ===========================================================
+       Deck framework — DO NOT EDIT the rules in this <style> block.
+       =========================================================== */
+    :root {
+      /* v3 on-brand fallbacks — masked by the per-deck :root below, but if that block is
+         trimmed/reordered the deck must still fall back to jidonglab indigo, not orange. */
+      --bg: #ffffff;
+      --fg: #191c24;
+      --muted: #666d7a;
+      --accent: #4f46e5;
+      --surface: #ffffff;
+      --shell: #0d0e10;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--shell);
+      color: var(--fg);
+      font: 18px/1.5 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .deck-shell { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; }
+    .deck-stage {
+      width: 1920px; height: 1080px; background: var(--bg); position: relative;
+      transform-origin: top left; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); flex-shrink: 0;
+    }
+    .slide { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+    .slide.active { display: flex; }
+
+    .deck-counter {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(10, 14, 26, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      padding: 6px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff; font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.18em; z-index: 1000;
+    }
+    .deck-counter button {
+      width: 36px; height: 36px; background: transparent; color: #fff; border: 0; border-radius: 50%;
+      font-size: 18px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: background 0.15s;
+    }
+    .deck-counter button:hover { background: rgba(255, 255, 255, 0.12); }
+    .deck-counter button[disabled] { opacity: 0.3; cursor: default; }
+    .deck-counter .deck-count { padding: 0 14px; letter-spacing: 0.22em; }
+    .deck-counter .deck-count .total { color: rgba(255, 255, 255, 0.5); }
+    .deck-hint {
+      position: fixed; bottom: 26px; right: 28px; color: rgba(255, 255, 255, 0.4);
+      font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.2em;
+      text-transform: uppercase; z-index: 999; pointer-events: none;
+    }
+
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      html, body { width: 1920px !important; height: auto !important; overflow: visible !important; background: #fff !important; }
+      .deck-shell { position: static !important; display: block !important; inset: auto !important; }
+      .deck-stage { width: 1920px !important; height: auto !important; transform: none !important; box-shadow: none !important; position: static !important; }
+      .slide { display: flex !important; position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important; page-break-after: always; break-after: page; }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .deck-counter, .deck-hint { display: none !important; }
+    }
+  </style>
+  <style>
+    /* ===== Per-deck — jidonglab IR deck · Document Design Language v3 =====
+       라이트 캔버스 · Pretendard · indigo accent. 색만 바꾸려면 :root의 accent 계열만
+       교체(프리셋 SKILL.md §3). 구조색·잉크 계층·시맨틱은 v3 고정.
+       v3 스펙: open-design/reference/document-design-language.md
+       금지(§5): 다크 커버 · 그라디언트/글로우 · 고스트 숫자 · mono/자간 걸린 한글 ·
+                 색 bold 프로즈 · 17px 미만 · accent 면 화면당 >2 · 동일 카드 3연속. */
+    :root {
+      /* 캔버스 */
+      --bg: #ffffff; --shell: #0d0e10;
+      /* 잉크 계층 (v3 §2) */
+      --fg: #191c24;        /* ink — 제목·강조·핵심 리스트 */
+      --body: #3d434f;      /* 본문 문단 */
+      --muted: #666d7a;     /* 보조·캡션·메타 */
+      --muted-2: #9aa0ab;   /* faint — 라벨·축·비활성 */
+      /* 면·라인 */
+      --surface: #f7f8fa; --surface-2: #f1f3f6;
+      --border: #e8eaee; --border-strong: #d7dade;
+      /* accent — indigo (jidonglab) */
+      --accent: #4f46e5; --accent-2: #4338ca;      /* accent-2 = hover/deep */
+      --accent-soft: rgba(79,70,229,0.10);         /* 채운 accent 패널 */
+      --accent-tint: rgba(79,70,229,0.06);         /* 옅은 tint */
+      /* 시맨틱 — 데이터 전용 (v3 §2) */
+      --green: #119a5e; --amber: #b7791f; --red: #d4573b; --navy: #182259;
+      /* 레거시 호환 shim — v3에서 그라디언트·글로우 폐지(§5).
+         아래 두 토큰은 기존 덱의 인라인 var() 참조만 무해화(solid accent / 그림자 없음).
+         신규 덱은 절대 쓰지 말 것. */
+      --accent-grad: var(--accent);
+      --shadow-accent: none;
+    }
+    body { font-family: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Segoe UI', Roboto, sans-serif; }
+    .deck-stage {
+      color: var(--body); word-break: keep-all; text-wrap: pretty;
+      font-variant-numeric: tabular-nums; font-feature-settings: "tnum";
+    }
+
+    .wrap { position: relative; width: 100%; height: 100%; padding: 84px 112px 66px; display: flex; flex-direction: column; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }   /* 코드·문서번호 전용 (§1) */
+
+    /* eyebrow — Pretendard 700 accent, 자간 0 · 앞에 가는 accent 룰 (mono/자간 금지 §1) */
+    .eyebrow {
+      font-size: 18px; font-weight: 700; letter-spacing: 0; color: var(--accent);
+      display: flex; align-items: center; gap: 13px;
+    }
+    .eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; display: inline-block; }
+    .h1 { font-size: 60px; font-weight: 640; line-height: 1.14; letter-spacing: -1.6px; color: var(--fg); margin-top: 20px; max-width: 1620px; }
+    .h1 b { font-weight: 700; color: var(--accent); }   /* 타이틀 핵심절 accent (면당 1) */
+    .lead { font-size: 26px; font-weight: 400; line-height: 1.55; color: var(--body); margin-top: 18px; max-width: 1480px; }
+    .lead b { color: var(--fg); font-weight: 640; }      /* dek 강조 = ink bold (색 bold 금지 §1) */
+
+    .foot {
+      margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding-top: 26px;
+      font-size: 17px; color: var(--muted); letter-spacing: 0;
+    }
+    .foot .brand { color: var(--fg); font-weight: 640; }
+    .foot .brand span { color: var(--accent); }
+    .src { font-size: 17px; color: var(--muted); }
+
+    /* cards & grids — 데이터 박스: hairline + radius 14, 그림자 금지 (§3) */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 40px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 40px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 40px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px 30px; display: flex; flex-direction: column; }
+    .card .num { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: 0; }
+    .card h3 { font-size: 27px; font-weight: 640; letter-spacing: -0.4px; margin-top: 13px; color: var(--fg); }
+    .card p { font-size: 20px; font-weight: 400; line-height: 1.6; color: var(--body); margin-top: 12px; }
+    .card .tag { font-size: 18px; color: var(--accent); font-weight: 560; margin-top: 16px; }
+    .card.core { border-color: var(--accent); background: var(--accent-tint); }   /* accent 보더+tint만, 그림자 금지 (§3) */
+
+    /* step flow */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 44px; }
+    .step { padding: 0 30px; border-left: 1px solid var(--border); position: relative; }
+    .step:first-child { padding-left: 0; border-left: 0; }
+    .step .si { font-size: 17px; color: var(--accent); font-weight: 700; letter-spacing: 0; }
+    .step h4 { font-size: 23px; font-weight: 640; letter-spacing: -0.3px; margin-top: 12px; color: var(--fg); }
+    .step ul { margin-top: 14px; list-style: none; }
+    .step li { font-size: 19px; color: var(--body); line-height: 1.5; padding-left: 18px; position: relative; margin-top: 10px; }
+    .step li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .note { font-size: 17px; color: var(--muted); margin-top: 20px; line-height: 1.6; }
+
+    /* ===== Cover (라이트 마스트헤드형 · in-flow — 다크 커버 폐지 §5-1) ===== */
+    .cover-wrap { padding-bottom: 64px; }
+    .cover-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .cover-head .kicker { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 0; }
+    .cover-head .cover-doc { font-size: 17px; color: var(--muted); letter-spacing: 0; }
+    .cover2 { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 64px; align-items: center; flex: 1; }
+    .cover2 .wm { font-size: 100px; font-weight: 700; letter-spacing: -3px; line-height: 0.98; color: var(--fg); }
+    .cover2 .wm .dot { color: var(--accent); }
+    .cover-rule { width: 52px; height: 3px; background: var(--accent); border-radius: 3px; margin-top: 28px; }   /* 가는 accent 룰 (§3) */
+    .cover2 .tagline { font-size: 38px; font-weight: 600; letter-spacing: -0.6px; margin-top: 24px; color: var(--fg); line-height: 1.2; }
+    .cover2 .tagline b { color: var(--accent); font-weight: 700; }
+    .cover2 .sub { font-size: 22px; color: var(--body); margin-top: 20px; max-width: 780px; line-height: 1.55; }
+    .cover2 .sub b { color: var(--fg); font-weight: 640; }
+    .cover-note { margin-top: 22px; font-size: 19px; color: var(--muted); }
+    .cover-note b { color: var(--accent); font-weight: 640; }
+    .cover-meta { margin-top: 26px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; font-size: 17px; color: var(--muted); letter-spacing: 0; }
+    .cover-meta .pill { color: var(--fg); font-weight: 640; }
+    /* 우측 요약 패널 — 하이라인 카드, accent는 얇은 룰 라벨 1개만 (accent 면 아낌 §2) */
+    .cover-shot { position: relative; }
+    .cover-panel { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 32px 34px; }
+    .cover-panel .pl { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: 0; display: flex; align-items: center; gap: 11px; }
+    .cover-panel .pl::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; }
+    .cover-panel .prow { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .cover-panel .prow:first-of-type { margin-top: 18px; }
+    .cover-panel .prow .pt { font-size: 23px; font-weight: 640; color: var(--fg); letter-spacing: -0.3px; }
+    .cover-panel .prow .pt .pu { font-size: 17px; color: var(--muted); font-weight: 500; }
+    .cover-panel .prow .pd { font-size: 18px; color: var(--body); margin-top: 4px; line-height: 1.5; }
+    .shot-cap { font-size: 17px; color: var(--muted); margin-top: 14px; text-align: center; }
+    .shot-cap b { color: var(--accent); font-weight: 640; }
+    /* KPI 밴드 — in-flow (바닥 겹침·잘림 해소), 하이라인 구분, 색 상단보더 금지 (§3) */
+    .cover-kpi { display: flex; margin-top: 40px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg); }
+    .cover-kpi div { flex: 1; padding: 22px 26px; border-left: 1px solid var(--border); }
+    .cover-kpi div:first-child { border-left: 0; }
+    .cover-kpi .k { font-size: 17px; color: var(--muted); letter-spacing: 0; }
+    .cover-kpi .v { font-size: 28px; font-weight: 640; letter-spacing: -0.5px; margin-top: 8px; color: var(--fg); }
+    .cover-kpi .v b { color: var(--accent); font-weight: 640; }
+
+    /* product screenshot frame — 그림자 최소(§3) */
+    .shot { width: 100%; display: block; border-radius: 14px; border: 1px solid var(--border-strong); box-shadow: 0 1px 2px rgba(8,9,10,0.06); object-fit: cover; }
+    .shot.plain { border: 0; box-shadow: none; border-radius: 0; background: transparent; }
+
+    /* two-col product (screenshot + bullets) */
+    .split { display: grid; grid-template-columns: 1.04fr 0.96fr; gap: 56px; align-items: center; margin-top: 36px; flex: 1; }
+    .feat { list-style: none; }
+    .feat li { padding: 20px 0; border-top: 1px solid var(--border); }
+    .feat li:first-child { border-top: 0; }
+    .feat .ft { font-size: 23px; font-weight: 640; letter-spacing: -0.3px; color: var(--fg); }
+    .feat .fd { font-size: 19px; color: var(--body); margin-top: 6px; line-height: 1.55; }
+    .feat .ft .n { color: var(--accent); font-size: 19px; font-weight: 700; margin-right: 9px; }
+
+    /* why-now timeline tiles */
+    .tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 44px; }
+    .tl .t { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 30px 30px; display: flex; flex-direction: column; }
+    .tl .t .when { color: var(--accent); font-weight: 700; font-size: 17px; letter-spacing: 0; }
+    .tl .t h3 { font-size: 24px; font-weight: 640; margin-top: 12px; letter-spacing: -0.4px; line-height: 1.22; color: var(--fg); }
+    .tl .t .big { font-size: 44px; font-weight: 700; letter-spacing: -1.4px; margin-top: 16px; color: var(--fg); line-height: 1; }
+    .tl .t .big .u { font-size: 19px; color: var(--muted); font-weight: 560; }
+    .tl .t p { font-size: 18px; color: var(--body); margin-top: 12px; line-height: 1.55; }
+    .tl .t .src { margin-top: auto; padding-top: 16px; }
+
+    /* incumbent manual strip */
+    .manual { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 8px; }
+    .manual .ms { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 12px; text-align: center; position: relative; }
+    .manual .ms .icn { font-size: 24px; line-height: 1; }
+    .manual .ms .mlab { font-size: 18px; font-weight: 600; margin-top: 9px; letter-spacing: -0.2px; color: var(--fg); }
+    .manual .ms .msub { font-size: 17px; color: var(--amber); margin-top: 6px; }
+
+    /* person vs AI mapping */
+    .vs { margin-top: 8px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .vs .vr { display: grid; grid-template-columns: 1fr 1.12fr; border-top: 1px solid var(--border); }
+    .vs .vr:first-child { border-top: 0; }
+    .vs .vc { padding: 15px 26px; font-size: 19px; display: flex; align-items: center; gap: 10px; line-height: 1.35; }
+    .vs .vc.old { color: var(--muted); background: var(--surface); }
+    .vs .vc.new { color: var(--fg); font-weight: 560; background: var(--accent-tint); border-left: 1px solid rgba(79,70,229,0.18); }
+    .vs .vc.new b { color: var(--accent); font-weight: 700; }
+    .vs .vhead .vc { font-size: 17px; letter-spacing: 0; color: var(--muted); font-weight: 700; }
+    .vs .vhead .vc.new { color: var(--accent); }
+
+    /* automation pipeline */
+    .pipe { display: flex; align-items: stretch; margin-top: 10px; }
+    .pstage { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 18px; position: relative; }
+    .pstage + .pstage { margin-left: 42px; }
+    .pstage::after { content: "→"; position: absolute; right: -34px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 24px; font-weight: 700; }
+    .pstage:last-child::after { content: none; }
+    .pstage .pi { font-size: 17px; color: var(--accent); font-weight: 700; letter-spacing: 0; }
+    .pstage h5 { font-size: 19px; font-weight: 640; margin-top: 9px; letter-spacing: -0.2px; color: var(--fg); }
+    .pstage p { font-size: 17px; color: var(--body); margin-top: 8px; line-height: 1.5; }
+    .pstage.human { border-color: rgba(183,121,31,0.4); background: rgba(183,121,31,0.06); }
+    .pstage.human .pi { color: var(--amber); }
+
+    /* cost comparison */
+    .costgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 8px; }
+    .costcard { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 28px; }
+    .costcard.hot { border-color: var(--accent); background: var(--accent-tint); }
+    .costcard .cl { font-size: 17px; color: var(--muted); letter-spacing: 0; font-weight: 600; }
+    .costcard .them { font-size: 19px; color: var(--muted-2); margin-top: 14px; text-decoration: line-through; text-decoration-color: var(--border-strong); }
+    .costcard .usv { font-size: 44px; font-weight: 700; letter-spacing: -1.6px; color: var(--accent); margin-top: 6px; line-height: 1; }
+    .costcard .usv .u { font-size: 18px; color: var(--muted); font-weight: 560; letter-spacing: -0.3px; }
+    .costcard .mult { display: inline-block; margin-top: 16px; font-size: 17px; font-weight: 600; color: var(--accent); background: var(--bg); border: 1px solid rgba(79,70,229,0.25); padding: 7px 14px; border-radius: 999px; }
+    .moatchips { display: flex; gap: 14px; margin-top: 22px; }
+    .moatchips .mc { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; }
+    .moatchips .mc .mct { font-size: 19px; font-weight: 640; color: var(--fg); letter-spacing: -0.2px; }
+    .moatchips .mc .mct b { color: var(--accent); }
+    .moatchips .mc .mcd { font-size: 17px; color: var(--body); margin-top: 6px; line-height: 1.45; }
+
+    /* funnel (legacy .fn; v3 라벨형은 ir-polish의 .funnel/.fn-row) */
+    .funnel { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+    .fn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 26px; display: flex; align-items: baseline; justify-content: space-between; margin: 0 auto; }
+    .fn .fl { font-size: 21px; font-weight: 560; color: var(--fg); }
+    .fn .fr { font-size: 18px; color: var(--accent); font-weight: 700; }
+
+    /* TAM/SAM/SOM ladder */
+    .tsm { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .tsm .tier { border-radius: 14px; padding: 24px 30px; display: flex; align-items: baseline; justify-content: space-between; }
+    .tsm .tier.tam { background: var(--accent-tint); border: 1px solid var(--accent); }
+    .tsm .tier.sam, .tsm .tier.som { background: var(--surface); border: 1px solid var(--border); }
+    .tsm .tier .tn { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: 0; }
+    .tsm .tier .td { font-size: 19px; color: var(--body); margin-top: 4px; }
+    .tsm .tier .tv { font-size: 32px; font-weight: 700; letter-spacing: -1px; color: var(--fg); text-align: right; }
+    .tsm .tier .tv .u { font-size: 17px; color: var(--muted); font-weight: 560; }
+
+    /* 2x2 positioning map */
+    .map2 { position: relative; flex: 1; margin-top: 28px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+    .map2::after { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); }
+    .map2 .gl { position: absolute; background: var(--border-strong); }
+    .map2 .gl.v { left: 50%; top: 6%; bottom: 6%; width: 1px; transform: translateX(-0.5px); }
+    .map2 .gl.h { top: 50%; left: 5%; right: 5%; height: 1px; transform: translateY(-0.5px); }
+    .map2 .axl { position: absolute; font-size: 17px; color: var(--muted); letter-spacing: 0; }
+    .map2 .axl.top { top: 18px; left: 50%; transform: translateX(-50%); }
+    .map2 .axl.bottom { bottom: 18px; left: 50%; transform: translateX(-50%); }
+    .map2 .axl.left { left: 22px; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: left center; }
+    .map2 .axl.right { right: 22px; top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: right center; }
+    .map2 .chip { position: absolute; transform: translate(-50%, -50%); font-size: 18px; color: var(--muted); font-weight: 560; text-align: center; line-height: 1.3; }
+    .map2 .chip.us { color: var(--accent); font-weight: 700; }
+    .map2 .chip.us .badge { display: inline-block; margin-top: 8px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 640; padding: 8px 16px; border-radius: 999px; }
+
+    /* loop diagram */
+    .loop2 { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 30px 30px; display: flex; flex-direction: column; gap: 14px; }
+    .loop2 .ln { display: flex; align-items: center; gap: 16px; }
+    .loop2 .ln .dot { width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border-strong); display: grid; place-items: center; font-size: 17px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+    .loop2 .ln.hot .dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .loop2 .ln .lx { font-size: 20px; font-weight: 560; color: var(--fg); }
+    .loop2 .ln.hot .lx { color: var(--accent); font-weight: 640; }
+    .loop2 .lret { font-size: 17px; color: var(--accent); padding-left: 48px; }
+
+    /* founder surfaces trio */
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 36px; }
+    .trio .sf { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 28px; }
+    .trio .sf .ic { font-size: 17px; color: var(--accent); font-weight: 700; letter-spacing: 0; }
+    .trio .sf h4 { font-size: 23px; font-weight: 640; margin-top: 10px; letter-spacing: -0.3px; color: var(--fg); }
+    .trio .sf p { font-size: 18px; color: var(--body); margin-top: 10px; line-height: 1.5; }
+    .trio .sf.core { border-color: var(--accent); background: var(--accent-tint); }
+
+    /* generic two-col text */
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 40px; flex: 1; }
+    .cols h4 { font-size: 18px; font-weight: 700; letter-spacing: 0; color: var(--muted); }
+    .cols ul { list-style: none; margin-top: 18px; }
+    .cols li { font-size: 21px; color: var(--fg); line-height: 1.5; padding-left: 22px; position: relative; margin-top: 15px; }
+    .cols li::before { content: ""; position: absolute; left: 0; top: 12px; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
+    .cols li span { color: var(--muted); }
+
+    /* pricing packs */
+    .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 8px; }
+    .pack { border: 1px solid var(--border); border-radius: 14px; padding: 28px 28px; background: var(--surface); }
+    .pack.hot { border-color: var(--accent); background: var(--accent-tint); }
+    .pack .pn { font-size: 20px; font-weight: 640; letter-spacing: -0.2px; color: var(--fg); }
+    .pack.hot .pn { color: var(--accent); }
+    .pack .pp { font-size: 36px; font-weight: 700; letter-spacing: -1.2px; margin-top: 12px; color: var(--fg); }
+    .pack .pp .w { font-size: 18px; color: var(--muted); font-weight: 560; }
+    .pack .pc { font-size: 18px; color: var(--accent); font-weight: 640; margin-top: 6px; }
+    .pack .pd { font-size: 18px; color: var(--body); margin-top: 12px; line-height: 1.45; }
+
+    /* unit economics */
+    .uebars { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+    .ueb .uel { font-size: 19px; color: var(--fg); font-weight: 560; display: flex; justify-content: space-between; align-items: baseline; }
+    .ueb .uel .uev { font-size: 22px; font-weight: 700; }
+    .ueb .uel .uev.cost { color: var(--amber); }
+    .ueb .uel .uev.price { color: var(--accent); }
+    .ueb .uet { height: 28px; background: var(--surface-2); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    .ueb .uef { height: 100%; border-radius: 8px; }
+    .ueb .uef.cost { background: var(--amber); }
+    .ueb .uef.price { background: var(--accent); }
+    .gmbadge { margin-top: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; }
+    .gmbadge .gv { font-size: 38px; font-weight: 700; letter-spacing: -1.2px; color: var(--green); }
+    .gmbadge .gd { font-size: 18px; color: var(--body); margin-top: 6px; line-height: 1.45; }
+
+    /* ask use-of-funds */
+    .ask-grid { display: grid; grid-template-columns: 0.78fr 1.22fr; gap: 50px; margin-top: 36px; align-items: start; }
+    .usebox { background: var(--accent-tint); border: 1px solid var(--accent); border-radius: 16px; padding: 34px 36px; }
+    .usebox .lbl { font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--accent); }
+    .usebox .amt { font-size: 92px; font-weight: 700; letter-spacing: -3.2px; color: var(--accent); line-height: 1; margin-top: 8px; }
+    .usebox .amt .w { font-size: 32px; color: var(--muted); font-weight: 560; letter-spacing: -0.5px; }
+    .usebox .amtl { font-size: 18px; color: var(--body); margin-top: 10px; }
+    .usebox .runway { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(79,70,229,0.22); font-size: 18px; color: var(--fg); }
+    .usebox .runway b { color: var(--accent); font-weight: 700; }
+    .usebox .buys { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(79,70,229,0.22); }
+    .usebox .buys .bl { font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--accent); }
+    .usebox .buys .bt { font-size: 22px; font-weight: 640; letter-spacing: -0.4px; color: var(--fg); margin-top: 8px; line-height: 1.3; }
+    .usebox .buys .bt b { color: var(--accent); font-weight: 700; }
+    .uselist { list-style: none; }
+    .uselist li { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 14px; display: flex; gap: 16px; align-items: flex-start; }
+    .uselist li:last-child { margin-bottom: 0; }
+    /* pill grows with content — 숫자 1-2자면 원형, '45%' 등 3자↑면 알약으로 (클리핑 방지) */
+    .uselist li .k { min-width: 34px; height: 34px; flex-shrink: 0; padding: 0 11px; border-radius: 999px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 17px; white-space: nowrap; }
+    .uselist li .ut { font-size: 21px; font-weight: 640; letter-spacing: -0.2px; color: var(--fg); }
+    .uselist li .ud { font-size: 18px; color: var(--body); margin-top: 5px; line-height: 1.5; }
+    .uselist li .ud b { color: var(--accent); font-weight: 700; }
+
+    /* GTM priority ladder */
+    .gtm-ch { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+    .gtm-row { display: flex; align-items: center; gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; }
+    .gtm-row.base { background: var(--accent-tint); border-color: var(--accent); }
+    .gtm-row .rk { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); color: var(--muted); display: grid; place-items: center; font-weight: 700; font-size: 17px; }
+    .gtm-row.base .rk { background: var(--accent); color: #fff; }
+    .gtm-row .mid { flex: 1; }
+    .gtm-row .nm { font-size: 21px; font-weight: 640; letter-spacing: -0.2px; color: var(--fg); }
+    .gtm-row .ds { font-size: 17px; color: var(--body); margin-top: 4px; line-height: 1.45; }
+    .gtm-row .tag { flex-shrink: 0; font-size: 17px; font-weight: 640; padding: 7px 14px; border-radius: 999px; white-space: nowrap; }
+    .gtm-row .tag.zero { color: var(--green); background: rgba(17,154,94,0.10); }
+    .gtm-row .tag.low { color: var(--accent); background: var(--accent-soft); }
+    .gtm-row .tag.once { color: var(--muted); background: var(--surface-2); }
+    .money { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 30px; }
+    .money .lbl { font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--muted); }
+    .money .big { font-size: 34px; font-weight: 700; letter-spacing: -1.2px; color: var(--fg); margin-top: 10px; line-height: 1.14; }
+    .money .big b { color: var(--accent); }
+    .money .big .u { font-size: 17px; color: var(--muted); font-weight: 560; }
+    .money .mr { font-size: 19px; color: var(--fg); padding: 14px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+    .money .mr:first-of-type { margin-top: 16px; }
+    .money .mr span { color: var(--muted); font-size: 18px; }
+    .money .mr b { color: var(--accent); font-weight: 700; }
+    .money .kill { margin-top: 14px; background: rgba(183,121,31,0.08); border: 1px solid rgba(183,121,31,0.28); border-radius: 12px; padding: 14px 18px; font-size: 18px; color: var(--fg); line-height: 1.45; }
+    .money .kill .kt { color: var(--amber); font-weight: 700; }
+    .money .kill b { color: var(--amber); font-weight: 700; }
+
+    /* comparison matrix */
+    .cmp { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 32px; }
+    .cmp th, .cmp td { padding: 16px 14px; border-bottom: 1px solid var(--border); }
+    .cmp thead th { font-size: 19px; font-weight: 640; color: var(--fg); text-align: center; letter-spacing: -0.2px; padding-bottom: 16px; vertical-align: bottom; }
+    .cmp thead th .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 5px; letter-spacing: 0; }
+    .cmp thead th.us-h { color: var(--accent); }
+    .cmp tbody td { text-align: center; font-size: 20px; color: var(--muted); }
+    .cmp .rh { text-align: left; font-size: 19px; font-weight: 560; color: var(--fg); }
+    .cmp .rh span { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+    .cmp .yes { color: var(--accent); font-weight: 700; font-size: 22px; }
+    .cmp .part { color: var(--amber); font-weight: 700; }
+    .cmp .no { color: var(--border-strong); font-weight: 700; }
+    .cmp td.us { background: var(--accent-tint); }
+    .cmp tbody tr:first-child td.us { box-shadow: inset 0 2px 0 var(--accent); }
+    .cmp .px { font-size: 17px; color: var(--muted); font-weight: 560; }
+    .cmp .px.usx { color: var(--accent); font-weight: 640; }
+
+    /* moats / bold list */
+    .moats { list-style: none; margin-top: 40px; }
+    .moats li { padding: 20px 0; border-top: 1px solid var(--border); }
+    .moats li:first-child { border-top: 0; }
+    .moats .mt { font-size: 22px; font-weight: 640; color: var(--fg); letter-spacing: -0.2px; }
+    .moats .mt .k { color: var(--accent); }
+    .moats .md { font-size: 19px; color: var(--body); margin-top: 8px; line-height: 1.55; }
+
+    /* helpers */
+    .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .fill > :first-child { margin-top: 0; }
+    .moats li::before { content: none !important; }
+    /* 콜아웃 — 중립 패널, 좌측 accent 룰 금지('손톱' AI 티) (§3 v3.1) */
+    .bigcallout { margin-top: 24px; background: #f7f8fa; border: 1px solid var(--border); border-radius: 14px; padding: 22px 28px; }
+    .bigcallout .ct { display: flex; align-items: center; gap: 9px; font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--fg); }
+    .bigcallout .ct::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+    .bigcallout p { font-size: 20px; color: var(--fg); margin-top: 10px; line-height: 1.55; }
+    .bigcallout p b { color: var(--accent); font-weight: 700; }
+  </style>
+  <style id="ir-polish">
+    /* ====== ir-deck polish (v3) — 세로 리듬 + 가독성 + funnel/gloss/dash 컴포넌트 ======
+       Document Design Language v3 준수: 덱 폰트 바닥 17px, mono/자간 걸린 한글 없음,
+       그라디언트·글로우 없음. (template.html ↔ inject_fix.py 동일 내용 유지 — strip+재주입 안전) */
+
+    /* -- 세로 균형: 본문 컴포넌트는 margin-top:auto 하나만, 푸터도 margin-top:auto →
+          두 auto가 여백을 반반씩 나눠 본문을 진짜 세로 중앙에 둔다.
+          (예전엔 본문에 margin-bottom:auto까지 줘서 auto 3개가 여백을 1/3씩 갈라
+           본문이 위로 뜨고 아래에 빈 띠가 겹으로 남았다.) -- */
+    .deck-stage .slide .wrap > .cols,
+    .deck-stage .slide .wrap > .fill > .cols { align-content: center; }
+    .deck-stage .slide .wrap > .grid-2, .deck-stage .slide .wrap > .grid-3, .deck-stage .slide .wrap > .grid-4,
+    .deck-stage .slide .wrap > .cmp, .deck-stage .slide .wrap > .gtm-ch, .deck-stage .slide .wrap > .tl,
+    .deck-stage .slide .wrap > .steps, .deck-stage .slide .wrap > .moats, .deck-stage .slide .wrap > .funnel,
+    .deck-stage .slide .wrap > .ask-grid, .deck-stage .slide .wrap > .packs, .deck-stage .slide .wrap > .tsm,
+    .deck-stage .slide .wrap > .pipe, .deck-stage .slide .wrap > .vs, .deck-stage .slide .wrap > .costgrid,
+    .deck-stage .slide .wrap > .trio, .deck-stage .slide .wrap > .manual, .deck-stage .slide .wrap > .loop2,
+    .deck-stage .slide .wrap > .uebars, .deck-stage .slide .wrap > .money,
+    .deck-stage .slide .wrap > .map2 { margin-top: auto !important; }
+    .deck-stage .slide .wrap > .foot { margin-top: auto; }
+    .deck-stage .slide .wrap > .note { margin-top: 22px; }
+
+    /* -- 가독성: 줄간격·항목 간격 (베이스 크기는 이미 ≥17px, 여기선 리듬만) -- */
+    .deck-stage .h1 { line-height: 1.14 !important; }
+    .deck-stage .lead { line-height: 1.55 !important; }
+    .deck-stage .card p { line-height: 1.6 !important; margin-top: 12px !important; }
+    .deck-stage .cols li { line-height: 1.55 !important; margin-top: 16px !important; }
+    .deck-stage .step li { line-height: 1.5 !important; margin-top: 11px !important; }
+
+    /* -- 인라인 폰트 바닥 강제: 17px 미만 인라인 크기를 17px로 상향 (덱 바닥 §5-7).
+          10px까지 + 공백 변형(font-size: Npx)까지 방어. inject_fix.py는 여기에 더해
+          주입 시 인라인 style 속성의 <17px를 정규식으로 17px로 재작성(근본 방어). -- */
+    .deck-stage [style*="font-size:10px"], .deck-stage [style*="font-size: 10px"],
+    .deck-stage [style*="font-size:10.5px"], .deck-stage [style*="font-size: 10.5px"],
+    .deck-stage [style*="font-size:11px"], .deck-stage [style*="font-size: 11px"],
+    .deck-stage [style*="font-size:11.5px"], .deck-stage [style*="font-size: 11.5px"],
+    .deck-stage [style*="font-size:12px"], .deck-stage [style*="font-size: 12px"],
+    .deck-stage [style*="font-size:12.5px"], .deck-stage [style*="font-size: 12.5px"],
+    .deck-stage [style*="font-size:13px"], .deck-stage [style*="font-size: 13px"],
+    .deck-stage [style*="font-size:13.5px"], .deck-stage [style*="font-size: 13.5px"],
+    .deck-stage [style*="font-size:14px"], .deck-stage [style*="font-size: 14px"],
+    .deck-stage [style*="font-size:14.5px"], .deck-stage [style*="font-size: 14.5px"],
+    .deck-stage [style*="font-size:15px"], .deck-stage [style*="font-size: 15px"],
+    .deck-stage [style*="font-size:15.5px"], .deck-stage [style*="font-size: 15.5px"],
+    .deck-stage [style*="font-size:16px"], .deck-stage [style*="font-size: 16px"],
+    .deck-stage [style*="font-size:16.5px"], .deck-stage [style*="font-size: 16.5px"] { font-size: 17px !important; }
+
+    /* -- funnel v3 — 라벨형 가로막대 (값 비례폭, 그라디언트·글로우 없음 §4·§5) -- */
+    .deck-stage .funnel { display: flex; flex-direction: column; gap: 18px; margin: 6px 0; }
+    .deck-stage .fn-row { display: flex; align-items: center; gap: 18px; }
+    .deck-stage .fn-label { flex: 0 0 300px; text-align: right; font-size: 19px; font-weight: 560; color: var(--fg); line-height: 1.3; }
+    .deck-stage .fn-track { flex: 1; height: 52px; background: var(--surface-2); border-radius: 12px; display: flex; align-items: center; }
+    /* 포커스 원칙(§4): 일반 단계는 회색 fill + ink 숫자, goal(최종/병목) 한 줄만 accent */
+    /* min-width:max-content → fill이 언제나 제 숫자를 통째로 담는다(3자↑ 값도).
+       고정폭(64px)은 안 됨 — 최종/병목 goal은 폭 1% 최소막대라 64px 안에 3자리 흰 숫자가
+       못 들어가 accent-tint 트랙으로 넘쳐 흰 글씨가 사라졌다(예: 12,400→124). max-content 금지 해제. */
+    .deck-stage .fn-fill { height: 100%; min-width: max-content; border-radius: 12px; background: #c9cdd6; display: flex; align-items: center; padding: 0 22px; }
+    .deck-stage .fn-num { color: var(--fg); font-size: 27px; font-weight: 700; letter-spacing: -0.3px; }
+    .deck-stage .fn-pct { flex: 0 0 168px; font-size: 17px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .deck-stage .fn-row.goal .fn-track { background: var(--accent-tint); }
+    .deck-stage .fn-row.goal .fn-fill { background: var(--accent); }
+    .deck-stage .fn-row.goal .fn-num { font-size: 30px; color: #fff; }
+    /* goal 행 통과율은 기본 muted — goal엔 달성 문구('최종 3.3%')를 쓰고 ▼ 하락 마커를 넣지 않는다.
+       시맨틱이 필요하면 opt-in: .pos=달성/상승(green) · .neg=하락(red) (v3 §2 up=green/down=red). */
+    .deck-stage .fn-row.goal .fn-pct { color: var(--muted); }
+    .deck-stage .fn-pct.pos { color: var(--green); }
+    .deck-stage .fn-pct.neg { color: var(--red); }
+
+    /* -- 용어 밴드(glossary) — 첫 등장 약어 정의, 슬라이드 하단 고정 (mono/자간 없음) -- */
+    .deck-stage .slide .wrap > .gloss { margin-top: auto; border-top: 1px solid var(--border); padding-top: 16px;
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 28px; }
+    .deck-stage .slide .wrap > .gloss + .foot { margin-top: 16px; }
+    .deck-stage .gloss .gl-lab { font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--accent); }
+    .deck-stage .gloss .gl-item { font-size: 17px; color: var(--muted); line-height: 1.5; }
+    .deck-stage .gloss .gl-item b { color: var(--fg); font-weight: 700; }
+
+    /* -- dash 하위 리스트 (.cols <li> 아래, 인라인 · 대신 줄바꿈) -- */
+    .deck-stage .cols ul.dash { list-style: none; margin: 10px 0 2px; padding-left: 4px; }
+    .deck-stage .cols ul.dash li { font-size: 19px; color: var(--body); line-height: 1.5; margin-top: 10px; padding-left: 20px; position: relative; }
+    .deck-stage .cols ul.dash li::before { content: "–"; left: 0; top: 0; width: auto; height: auto; background: none; border-radius: 0; color: var(--accent); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <div class="deck-stage" id="deck-stage">
+
+      <!-- 01 COVER -->
+      <section class="slide active" data-screen-label="01 Cover">
+        <div class="wrap cover-wrap">
+          <div class="cover-head">
+            <span class="kicker">Engineering Report</span>
+            <span class="cover-doc">FM-2026-07 · 2026-07-06</span>
+          </div>
+          <div class="cover2">
+            <div class="cover-lead">
+              <div class="wm">fable<span class="dot">-</span>mode</div>
+              <div class="cover-rule"></div>
+              <div class="tagline">Opus 4.8을 <b>Fable 5 행동 규범</b>으로 굴린다</div>
+              <div class="sub">Fable 세션에만 주입되는 시스템 프롬프트 층을 훅 4종으로 이식했다. <b>행동은 97%까지 따라오고, 비용은 Fable의 72%</b>. 웨이트가 만드는 추론 갭은 남는다 — 그 경계까지 실측했다.</div>
+              <div class="cover-note">실측 — <b>3조건 × 4과제</b> · 트랜스크립트 usage 집계 · 6차원 루브릭 채점</div>
+              <div class="cover-meta">
+                <span class="pill">지동석 · jidonglab</span>
+                <span>jd@jidonglab.com</span>
+                <span>v1.4 · github.com/jee599/fable-mode-kit</span>
+              </div>
+            </div>
+            <div class="cover-shot">
+              <div class="cover-panel">
+                <div class="pl">스택 구성</div>
+                <div class="prow"><div class="pt">훅 4종 <span class="pu">detect · context · subagent · stop</span></div><div class="pd">자동감지, 매 턴 규범 주입, 서브에이전트 커버, 자가검증·누설가드</div></div>
+                <div class="prow"><div class="pt">output style + 래퍼 <span class="pu">fable-like · claude-fablelike</span></div><div class="pd">시스템 프롬프트 레벨 이식 + xhigh·ultracode 원샷 런처</div></div>
+                <div class="prow"><div class="pt">토글 + 텔레메트리 <span class="pu">/fable-mode · stats</span></div><div class="pd">on/off/status — 주입 횟수·토큰 오버헤드 세션별 기록</div></div>
+              </div>
+              <div class="shot-cap">설치는 플러그인 2줄 — <b>Opus 세션 자동 감지</b></div>
+            </div>
+          </div>
+          <div class="cover-kpi">
+            <div><div class="k">행동 충실도 (36점 루브릭)</div><div class="v"><b>97%</b> 순정 64%</div></div>
+            <div><div class="k">비용 (동일 4과제 합)</div><div class="v">Fable의 0.72×</div></div>
+            <div><div class="k">산출물 등가성 (스택↔Fable)</div><div class="v">80–95%</div></div>
+            <div><div class="k">v1.4 주입 오버헤드</div><div class="v">minor 턴 −84%</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 BACKGROUND -->
+      <section class="slide" data-screen-label="02 Why">
+        <div class="wrap">
+          <div class="eyebrow">Background · 무엇이 갈라지나</div>
+          <h2 class="h1">Fable과 Opus의 차이는 두 층 — <b>한 층만 이식된다</b></h2>
+          <p class="lead">2026-07-02 리서치(양 모델 헤드리스 프로브 + CLI 바이너리 분석)로 확인 — 하네스(effort·워크플로·메모리·서브에이전트)는 두 모델 공통이고, 다른 건 <b>시스템 프롬프트와 웨이트</b>뿐이다.</p>
+          <div class="grid-2">
+            <div class="card core"><div class="num">Layer 1 · 이식 가능</div><h3>시스템 프롬프트 행동 층</h3><p>Fable 세션에만 주입되는 소통·자율실행·검증 규범(실측 확인). 텍스트이므로 훅으로 재현할 수 있다 — 결론 우선, 턴 완결성, 허락 질문 금지, 검증 후 보고, 스코프 준수.</p><div class="tag">→ 이 킷이 이식하는 전부</div></div>
+            <div class="card"><div class="num">Layer 2 · 이식 불가</div><h3>모델 웨이트</h3><p>얽힌 단일 패스 추론, 장기 자율 런 유지력. 3rd-party 벤치 기준 5–11pt(추정)의 격차 — 프롬프트로는 닫히지 않는다.</p><div class="tag">→ Fable 직행 또는 다중 검증으로 보정</div></div>
+          </div>
+          <p class="note">단가 — Fable $10/$50, Opus 4.8 $5/$25 (Mtok 입력/출력, 정확히 2×). 킷의 명제: 2× 단가를 내지 않고 Layer 1을 산다.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>02 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 03 STACK -->
+      <section class="slide" data-screen-label="03 Stack">
+        <div class="wrap">
+          <div class="eyebrow">Method · 4-Hook Stack</div>
+          <h2 class="h1">훅 4종이 세션 수명주기 전체를 잡는다</h2>
+          <p class="lead">감지, 매 턴 규범, 서브에이전트, 종료 검증 — 셸 스크립트 4개에 상태는 <b>마커 파일</b>뿐. 데몬도 프록시도 없다.</p>
+          <div class="steps">
+            <div class="step"><div class="si">SessionStart</div><h4>fable-detect.sh</h4><ul><li>Opus 모델 자동 감지 — 입력·조상 프로세스 플래그·settings 3단 폴백</li><li>세션 마커 기록, Fable 세션은 해제</li></ul></div>
+            <div class="step"><div class="si">UserPromptSubmit</div><h4>fable-context.sh</h4><ul><li>매 턴 규범 재주입 — 장기 컨텍스트 희석 방지</li><li>v1.4 적응형: major는 풀 블록, minor는 리마인더</li><li>major 턴 마킹 + 주입 텔레메트리</li></ul></div>
+            <div class="step"><div class="si">SubagentStart</div><h4>fable-subagent.sh</h4><ul><li>빌트인·커스텀·워크플로 서브에이전트 전부에 중립 conduct 블록</li><li>정의에 이미 있으면 자동 스킵 — 이중 주입 방지</li></ul></div>
+            <div class="step"><div class="si">Stop</div><h4>fable-stop-verify.sh</h4><ul><li>major 턴 1회 자가검증 — 검증 후 보고·결론 우선·스코프</li><li>v1.4 누설가드: 내부 용어 감지 시 1회 재작성</li></ul></div>
+          </div>
+          <p class="note">활성화 3경로(자동감지 · FABLE_MODE=1 · /fable-mode on) + 킬스위치 FABLE_MODE=0. Fable 세션은 트랜스크립트 감지로 자동 침묵 — 이중 주입 없음.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>03 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 04 METHODOLOGY -->
+      <section class="slide" data-screen-label="04 Methodology">
+        <div class="wrap">
+          <div class="eyebrow">Methodology · A/B/C</div>
+          <h2 class="h1">같은 프롬프트, 같은 조건 — <b>다른 건 스택뿐</b></h2>
+          <p class="lead">헤드리스 CLI로 조건당 동일 과제를 실행하고, 트랜스크립트의 usage 필드로 토큰을, 공식 단가로 비용을 집계했다. 행동은 <b>6차원 루브릭 36점</b>으로 심판 채점.</p>
+          <div class="cols">
+            <div><h4>3조건 — 동일 프롬프트 · 동일 effort · empty MCP</h4><ul>
+              <li>A — 순정 Opus 4.8 <span>FABLE_MODE=0, 스택 완전 비활성</span></li>
+              <li>B — Opus 4.8 + fable-mode <span>훅 4종 활성 — 측정 대상</span></li>
+              <li>C — Fable 5 원본 <span>기준선. 스택은 자동 침묵</span></li>
+            </ul></div>
+            <div><h4>4과제 유형 — 실사용 카테고리</h4><ul>
+              <li>진단 <span>버그 원인 질문 — 스코프 준수(무단 수정 금지)를 본다</span></li>
+              <li>구현 <span>slugify 함수 — 실행 검증·근거 보고를 본다</span></li>
+              <li>모호한 정리 <span>"로그 좀 정리해줘" — 자율 실행 vs 역질문 정지를 본다</span></li>
+              <li>단순 질문 <span>rebase vs merge — 응답 형태·오버헤드를 본다</span></li>
+            </ul></div>
+          </div>
+          <p class="note">진단·구현·단순 질문은 2026-07-06~07 v1.4 스택 재실측, 모호한 정리는 2026-07-03 실측. 공용 훅(omc-dial 등)은 세 조건에 동일 적용 — 조건 간 비교에 중립.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>04 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 05 CONDUCT RESULTS -->
+      <section class="slide" data-screen-label="05 Conduct">
+        <div class="wrap">
+          <div class="eyebrow">Results · Conduct Fidelity</div>
+          <h2 class="h1">행동 충실도 64% → <b>97%</b> — 격차 대부분이 닫힌다</h2>
+          <p class="lead">과제 3종 × 6차원 루브릭 36점 만점 — 결론 우선 · 형태 적합 · 스코프 · 자율 실행 · 검증 보고 · 완결성.</p>
+          <div class="uebars">
+            <div class="ueb"><div class="uel"><span>A — 순정 Opus 4.8</span><span class="uev" style="color:var(--muted)">23 / 36 · 64%</span></div><div class="uet"><div class="uef" style="width:64%;background:#c9cdd6;"></div></div></div>
+            <div class="ueb"><div class="uel"><span>B — Opus 4.8 + fable-mode</span><span class="uev price">35 / 36 · 97%</span></div><div class="uet"><div class="uef price" style="width:97%;"></div></div></div>
+            <div class="ueb"><div class="uel"><span>C — Fable 5 (기준선)</span><span class="uev" style="color:var(--navy)">36 / 36 · 100%</span></div><div class="uet"><div class="uef" style="width:100%;background:var(--navy);"></div></div></div>
+          </div>
+          <p class="note">B의 35점은 v1.3 누설 회귀(자가검증 문구가 출력에 새는 문제)를 수정한 뒤 재실행으로 확인한 값 — 남은 1점은 표현 밀도 차이다.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>05 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 06 FIXES -->
+      <section class="slide" data-screen-label="06 Fixes">
+        <div class="wrap">
+          <div class="eyebrow">Results · What Actually Got Fixed</div>
+          <h2 class="h1">순정 Opus의 대실패 2건이 <b>완전 교정</b>됐다</h2>
+          <p class="lead">점수 차의 대부분은 미세한 톤이 아니라 <b>명백한 행동 실패</b>에서 왔다 — 그리고 그 실패는 규범 주입으로 사라졌다.</p>
+          <div class="vs">
+            <div class="vr vhead"><div class="vc old">순정 Opus 4.8</div><div class="vc new">+ fable-mode</div></div>
+            <div class="vr"><div class="vc old">"왜 버그가 나?" 진단 요청에 무단으로 파일을 수정하고, 실행 없이 결과를 단정</div><div class="vc new">진단만 보고하고 멈춤 — 원인은 <b>실행으로 검증</b> (6/12 → 12/12)</div></div>
+            <div class="vr"><div class="vc old">모호한 "정리해줘" 요청에 조사만 하고 "어떤 방식을 원하세요?" 정지</div><div class="vc new">비파괴 디폴트를 <b>즉시 실행</b>, 파괴적 단계만 보류 (5/12 → 12/12)</div></div>
+            <div class="vr"><div class="vc old">v1.3 스택 자체 회귀 — 자가검증 문구가 사용자 출력에 누설</div><div class="vc new">v1.4 누설가드 — 최종 메시지를 <b>결정론적으로 감지</b>해 1회 재작성 강제</div></div>
+          </div>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>06 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 07 COST -->
+      <section class="slide" data-screen-label="07 Cost">
+        <div class="wrap">
+          <div class="eyebrow">Results · Tokens &amp; Cost</div>
+          <h2 class="h1">동일 4과제 합계, 스택은 <b>Fable의 72%</b> 비용</h2>
+          <p class="lead">트랜스크립트 usage × 공식 단가(캐시 읽기·쓰기 포함). Fable은 출력 토큰을 절반만 쓰지만 — <b>단가 2×가 역전</b>시킨다.</p>
+          <table class="cmp">
+            <thead><tr><th style="text-align:left;">과제</th><th>A · 순정 Opus<span class="sub">$5 / $25 Mtok</span></th><th class="us-h">B · Opus + 스택<span class="sub">$5 / $25 Mtok</span></th><th>C · Fable 5<span class="sub">$10 / $50 Mtok</span></th></tr></thead>
+            <tbody>
+              <tr><td class="rh">진단 <span>버그 원인 설명 · 7/7 재실측</span></td><td>$0.23</td><td class="us">$0.28</td><td>$0.49</td></tr>
+              <tr><td class="rh">구현 <span>slugify + 검증 · 7/7 재실측</span></td><td>$0.34</td><td class="us">$0.45</td><td>$0.49</td></tr>
+              <tr><td class="rh">모호한 정리 <span>로그 파일 정리 · 7/3 실측</span></td><td>$0.86</td><td class="us">$1.13</td><td>$1.52</td></tr>
+              <tr><td class="rh">단순 질문 <span>rebase vs merge · 7/6 실측</span></td><td>$0.12</td><td class="us">$0.13</td><td>$0.27</td></tr>
+              <tr><td class="rh"><b>합계 · Fable 대비</b></td><td><b>$1.54 · 0.56×</b></td><td class="us"><b style="color:var(--accent)">$1.99 · 0.72×</b></td><td><b>$2.77 · 1.00×</b></td></tr>
+            </tbody>
+          </table>
+          <p class="note">출력 토큰 합 — A 12.8k · B 20.0k · C 9.8k. 스택의 추가분(A→B +$0.45)은 규범 주입과 자가검증 턴의 값이고, Fable은 토큰을 절반만 쓰지만 단가 2×가 역전시킨다. 과제별 편차는 크다 — 진단은 0.57×, 구현은 0.91×.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>07 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 08 EQUIVALENCE -->
+      <section class="slide" data-screen-label="08 Equivalence">
+        <div class="wrap">
+          <div class="eyebrow">Results · Output Equivalence</div>
+          <h2 class="h1">산출물 등가성 80–95% — 결론은 같고 <b>디폴트 선택만 갈린다</b></h2>
+          <p class="lead">과제별로 스택(B)과 Fable(C)의 최종 산출물을 나란히 비교 — 기능 등가성·응답 형태·행동 규범 기준.</p>
+          <div class="gtm-ch">
+            <div class="gtm-row base"><div class="rk">1</div><div class="mid"><div class="nm">진단 — 동일 결론, 동일 행동</div><div class="ds">7/3(가변 기본 인자)과 7/7 재실측(키 불일치) 모두 — 같은 원인 지목, 수정 없이 진단만, 실행 근거 제시까지 동일</div></div><span class="tag low">등가성 ~95%</span></div>
+            <div class="gtm-row"><div class="rk">2</div><div class="mid"><div class="nm">구현 — 같은 스펙 충족, 같은 검증 습관</div><div class="ds">요구 4조건을 모두 만족하는 slugify + 실행 검증. 7/7 재실측 산출물 3벌을 같은 케이스로 돌리면 출력이 전부 일치</div></div><span class="tag low">등가성 ~90%</span></div>
+            <div class="gtm-row"><div class="rk">3</div><div class="mid"><div class="nm">단순 질문 — 결론 우선 산문, 같은 내용</div><div class="ds">첫 문장에 답(merge commit 보존 vs 히스토리 재작성), 공유 브랜치 경고까지 동일 — 문체 밀도만 차이</div></div><span class="tag low">등가성 ~85%</span></div>
+            <div class="gtm-row"><div class="rk">4</div><div class="mid"><div class="nm">모호한 정리 — 같은 규범, 다른 디폴트</div><div class="ds">둘 다 비파괴 실행 후 파괴 작업만 보류. B는 logs/ 폴더 정리, C는 gzip 아카이브 — 합리적 디폴트가 갈렸을 뿐</div></div><span class="tag once">등가성 ~80%</span></div>
+          </div>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>08 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 09 V1.4 ADAPTIVE INJECTION -->
+      <section class="slide" data-screen-label="09 Adaptive">
+        <div class="wrap">
+          <div class="eyebrow">v1.4 · Adaptive Injection</div>
+          <h2 class="h1">주입을 턴 크기에 맞춘다 — minor 턴 <b>−84%</b></h2>
+          <p class="lead">규범 블록은 매 턴 들어가야 효과가 유지되지만, 짧은 질답 턴에 1,377자 전체는 낭비였다. v1.4는 <b>major 턴·세션 첫 턴·5턴마다</b>만 풀 블록을 넣고, 나머지는 핵심 리마인더로 줄인다.</p>
+          <div class="uebars">
+            <div class="ueb"><div class="uel"><span>풀 블록 — major 턴 · 세션 첫 턴 · 5턴마다 리프레시</span><span class="uev" style="color:var(--fg)">1,377자 ≈ 860토큰</span></div><div class="uet"><div class="uef" style="width:100%;background:#c9cdd6;"></div></div></div>
+            <div class="ueb"><div class="uel"><span>리마인더 — 그 외 minor 턴 (결론 우선·산문·자율 실행·근거 보고)</span><span class="uev price">214자 ≈ 134토큰</span></div><div class="uet"><div class="uef price" style="width:16%;"></div></div></div>
+          </div>
+          <div class="bigcallout"><div class="ct">50턴 세션 주입 오버헤드 (계산치)</div><p>minor 턴 비중 50%면 <b>−34%</b>, 70%면 −47%, 80%면 −54%. 매 주입은 stats/&lt;세션id&gt;.tsv에 기록되고, /fable-mode status가 세션별 오버헤드를 보고한다.</p></div>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>09 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 10 V1.4 GUARDS -->
+      <section class="slide" data-screen-label="10 Guards">
+        <div class="wrap">
+          <div class="eyebrow">v1.4 · Guards &amp; Telemetry</div>
+          <h2 class="h1">모델을 믿는 대신 <b>결정론으로 지킨다</b></h2>
+          <p class="lead">v1.4의 나머지 고도화 — 전부 결정론적이거나 관측 가능한 장치다.</p>
+          <ul class="moats">
+            <li><div class="mt"><span class="k">누설가드</span> — 신뢰가 아니라 감지</div><div class="md">턴 종료 시 최종 메시지를 스캔해 내부 지침 용어('자가검증', 'fable-mode' 등)가 새어 나오면 1회 재작성을 강제한다. 마커로 무한 루프를 차단 — 7/3 E2E가 잡은 유일한 회귀 클래스를 결정론으로 봉인.</div></li>
+            <li><div class="mt"><span class="k">플러그인 dedupe</span> — 이중 주입 방지 확대</div><div class="md">서브에이전트 정의에 conduct 블록이 이미 있으면 스킵하는 검사를 플러그인 경로(marketplaces·cache, 네임스페이스 타입)까지 확장했다.</div></li>
+            <li><div class="mt"><span class="k">텔레메트리</span> — 오버헤드를 숫자로</div><div class="md">주입마다 타입·문자수를 세션별 tsv에 기록한다. /fable-mode status가 full/lite 횟수와 토큰 환산치를 보고 — 이 보고서의 오버헤드 수치도 여기서 나왔다.</div></li>
+            <li><div class="mt"><span class="k">major 동사 확장</span> — 자가검증 커버리지</div><div class="md">커밋·푸시·배포·발행·보고서·테스트·실행·고도화·최적화 등을 추가했다. 짧은 영어 동사(run·test·make)는 부분 문자열 오탐 때문에 의도적으로 제외 — 80자 규칙이 받친다.</div></li>
+          </ul>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>10 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 11 VERIFICATION -->
+      <section class="slide" data-screen-label="11 Verification">
+        <div class="wrap">
+          <div class="eyebrow">Verification</div>
+          <h2 class="h1">분기 테스트 14/14 · 헤드리스 3런 · 커밋 173f008 푸시</h2>
+          <p class="lead">모든 분기를 스크립트로 직접 두드려 확인한 뒤 커밋했다 — 로컬 설치본과 킷 레포는 diff 0으로 동기.</p>
+          <div class="cols">
+            <div><h4>fable-context.sh — 주입 분기</h4><ul>
+              <li>킬스위치 FABLE_MODE=0이면 침묵 <span>통과</span></li>
+              <li>세션 첫 주입은 풀 블록 <span>통과</span></li>
+              <li>minor 턴은 리마인더 + stats 기록 <span>통과</span></li>
+              <li>major 턴은 풀 블록 + 마커 <span>통과</span></li>
+              <li>5턴마다 풀 블록 리프레시 <span>통과</span></li>
+            </ul></div>
+            <div><h4>stop-verify · subagent · detect · E2E</h4><ul>
+              <li>자가검증은 턴당 1회, 재정지 시 침묵 <span>통과 — 루프 없음</span></li>
+              <li>누설 텍스트 감지 시 1회 재작성 블록 <span>통과</span></li>
+              <li>Fable 트랜스크립트면 자동 침묵 <span>통과</span></li>
+              <li>conduct 마커 보유 에이전트는 주입 스킵 <span>통과</span></li>
+              <li>헤드리스 실주입 — 7/6 질문 과제 3런 <span>통과</span></li>
+            </ul></div>
+          </div>
+          <p class="note">배포 — github.com/jee599/fable-mode-kit 커밋 173f008(v1.4) 푸시 완료. 플러그인 2줄 설치와 클래식 인스톨러 양쪽 유지.</p>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>11 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 12 LIMITS -->
+      <section class="slide" data-screen-label="12 Limits">
+        <div class="wrap">
+          <div class="eyebrow">Honest Limits</div>
+          <h2 class="h1">97%는 행동 점수다 — 지능 벤치마크가 아니다</h2>
+          <p class="lead">이 보고서가 주장하지 않는 것들을 명확히 남긴다.</p>
+          <ul class="moats">
+            <li><div class="mt"><span class="k">표본</span> — 4과제 × 조건당 1런</div><div class="md">과제는 행동 차이가 드러나도록 설계됐다. 통계적 신뢰구간을 말할 표본이 아니며, 재현용 러너는 보존되어 있다.</div></li>
+            <li><div class="mt"><span class="k">웨이트 갭</span> — 얽힌 추론·장기 자율 런은 남는다</div><div class="md">3rd-party 벤치 5–11pt(추정). 고위험 결정·장기 자율 작업은 Fable 직행이 맞고, 스택으로 가려면 팬아웃과 적대 검증으로 보정한다.</div></li>
+            <li><div class="mt"><span class="k">부분 재실측</span> — 모호 정리만 7/3 값 유지</div><div class="md">한도 리셋 후 재실행으로 진단·구현은 v1.4 스택 재실측이 표에 반영됐다. 모호 정리는 A·B가 다음 세션 한도에 다시 걸려 7/3 값을 유지 — 러너는 보존되어 있다.</div></li>
+            <li><div class="mt"><span class="k">환경</span> — 공용 훅이 세 조건에 공통 적용</div><div class="md">omc-dial 등 로컬 공용 훅이 A·B·C 모두에 걸렸다. 조건 간 비교는 중립이지만, A의 절대값은 '완전 민낯 Opus'보다 다소 유리할 수 있다.</div></li>
+          </ul>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>12 / 13</span></div>
+        </div>
+      </section>
+
+      <!-- 13 CLOSING -->
+      <section class="slide" data-screen-label="13 Closing">
+        <div class="wrap">
+          <div class="eyebrow">결론</div>
+          <h2 class="h1">행동의 97%를 절반 단가로 — <b>경계만 지키면 남는 장사</b></h2>
+          <p class="lead">라우팅 규칙은 세 줄이면 된다.</p>
+          <div class="fill">
+            <div class="grid-3">
+              <div class="card core"><div class="num">01 · 기본값</div><h3>대화형 작업은 스택</h3><p>구현·진단·문서·리뷰 등 행동 규범이 품질의 대부분인 일. Fable 대비 0.72× 비용에 등가성 80–95%.</p><div class="tag">→ Opus 세션 자동 감지로 켜진다</div></div>
+              <div class="card"><div class="num">02 · 예외</div><h3>얽힌 추론은 Fable 직행</h3><p>단일 패스에 걸린 고난도 추론, 장기 자율 런, 고위험 결정. 웨이트 갭은 프롬프트로 닫히지 않는다.</p><div class="tag">→ 또는 팬아웃 + 적대 검증 보정</div></div>
+              <div class="card"><div class="num">03 · 옵트아웃</div><h3>크론·원샷은 FABLE_MODE=0</h3><p>자가검증이 턴을 하나 더 쓴다 — 타임아웃 예산이 있는 헤드리스·크론은 끄는 게 맞다.</p><div class="tag">→ 킬스위치가 모든 경로를 이긴다</div></div>
+            </div>
+            <p class="note">출처 — 2026-07-03 E2E(3과제 × 3조건) + 2026-07-06~07 재실측(진단·구현·질문 × 3조건)·분기 테스트 14건, 트랜스크립트 usage 실측 · 단가는 공식 문서 기준 · 벤치 갭은 3rd-party 추정. github.com/jee599/fable-mode-kit</p>
+          </div>
+          <div class="foot"><span class="brand">fable-mode·<span>v1.4</span></span><span>13 / 13 · 지동석 · jd@jidonglab.com</span></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Framework chrome — DO NOT EDIT below this line. -->
+  <nav class="deck-counter" role="navigation" aria-label="Deck navigation">
+    <button type="button" id="deck-prev" aria-label="Previous slide">‹</button>
+    <span class="deck-count"><span id="deck-cur">01</span> <span class="total">/ <span id="deck-total">01</span></span></span>
+    <button type="button" id="deck-next" aria-label="Next slide">›</button>
+  </nav>
+  <div class="deck-hint">← / → · space</div>
+
+  <script>
+    (function () {
+      var stage = document.getElementById('deck-stage');
+      var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+      var prev = document.getElementById('deck-prev');
+      var next = document.getElementById('deck-next');
+      var cur = document.getElementById('deck-cur');
+      var total = document.getElementById('deck-total');
+      var STORE = 'deck:idx:' + (location.pathname || '/');
+      var idx = 0;
+      function fit() {
+        var sw = window.innerWidth, sh = window.innerHeight, pad = 32;
+        var s = Math.min((sw - pad) / 1920, (sh - pad) / 1080);
+        if (!isFinite(s) || s <= 0) s = 1;
+        stage.style.transform = 'translate(' + ((sw - 1920 * s) / 2) + 'px,' + ((sh - 1080 * s) / 2) + 'px) scale(' + s + ')';
+      }
+      function pad2(n) { return (n < 10 ? '0' : '') + n; }
+      function paint() {
+        slides.forEach(function (el, i) { el.classList.toggle('active', i === idx); });
+        if (cur) cur.textContent = pad2(idx + 1);
+        if (total) total.textContent = pad2(slides.length);
+        if (prev) prev.toggleAttribute('disabled', idx <= 0);
+        if (next) next.toggleAttribute('disabled', idx >= slides.length - 1);
+      }
+      function go(i) { idx = Math.max(0, Math.min(slides.length - 1, i)); paint(); try { localStorage.setItem(STORE, String(idx)); } catch (_) {} }
+      function onKey(e) {
+        var t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Home') { e.preventDefault(); go(0); }
+        else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+      }
+      window.addEventListener('keydown', onKey, true);
+      document.addEventListener('keydown', onKey, true);
+      if (prev) prev.addEventListener('click', function () { go(idx - 1); });
+      if (next) next.addEventListener('click', function () { go(idx + 1); });
+      document.body.setAttribute('tabindex', '-1');
+      document.body.style.outline = 'none';
+      function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
+      document.addEventListener('mousedown', focusDeck);
+      window.addEventListener('load', focusDeck);
+      try { var saved = parseInt(localStorage.getItem(STORE) || '0', 10); if (!isNaN(saved) && saved >= 0 && saved < slides.length) idx = saved; } catch (_) {}
+      window.addEventListener('resize', fit);
+      fit(); paint(); focusDeck();
+    })();
+  </script>
+  <script id="ir-autofit">
+    /* Auto-fit: if a slide's content exceeds 1080px, scale its .wrap so the bottom never clips. */
+    (function () {
+      var H = 1080;
+      function run() {
+        document.querySelectorAll('.deck-stage .slide').forEach(function (s) {
+          var w = s.querySelector('.wrap'); if (!w) return;
+          w.style.transform = ''; w.style.width = '';
+          var hidden = !s.classList.contains('active');
+          if (hidden) { s.style.visibility = 'hidden'; s.style.display = 'flex'; }
+          var prevH = w.style.height; w.style.height = 'auto';
+          var need = w.offsetHeight;
+          w.style.height = prevH;
+          if (hidden) { s.style.display = ''; s.style.visibility = ''; }
+          if (need > H + 2) {
+            var sc = H / need;
+            w.style.transformOrigin = 'top center';
+            w.style.transform = 'scale(' + sc + ')';
+            w.style.width = (100 / sc) + '%';
+          }
+        });
+      }
+      if (document.readyState === 'complete') run();
+      else window.addEventListener('load', run);
+      window.addEventListener('resize', run);
+    })();
+  </script>
+</body>
+</html>
