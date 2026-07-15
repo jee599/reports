@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-07-15T06:39:30.512Z",
+  "coverage": {
+    "structured_start": "2025-01-01",
+    "structured_end": "2026-06-30",
+    "bridge_start": "2026-07-01",
+    "bridge_end": "2026-07-15"
+  },
+  "structured_filings": 88893,
+  "current_quarter_bridge_filings": 2361,
+  "all_public_form_d_filings": 91254,
+  "early_company_proxy_records": 9257,
+  "high_priority_records": 4217,
+  "conditional_records": 3500,
+  "categories": [
+    {
+      "category": "기타 수직 업무",
+      "count": 3557
+    },
+    {
+      "category": "소프트웨어·데이터",
+      "count": 3374
+    },
+    {
+      "category": "의료 운영",
+      "count": 584
+    },
+    {
+      "category": "바이오·제약 지원",
+      "count": 434
+    },
+    {
+      "category": "금융·보험 운영",
+      "count": 380
+    },
+    {
+      "category": "커머스·로컬 운영",
+      "count": 340
+    },
+    {
+      "category": "산업·현장 운영",
+      "count": 304
+    },
+    {
+      "category": "전문서비스 운영",
+      "count": 284
+    }
+  ],
+  "limitations": [
+    "Form D is a notice of an exempt private offering, not proof that funding closed.",
+    "Form D does not identify venture stage or reliably describe products.",
+    "The early-company and discovery scores are transparent heuristics, not investment recommendations.",
+    "July rows are an index-only bridge pending the SEC quarterly structured release."
+  ]
+}
